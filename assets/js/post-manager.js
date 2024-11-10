@@ -1,90 +1,164 @@
 class PostManager {
     constructor() {
-        this.metadata = null;
-        this.cache = new Map();
+        this.posts = [];
+        this.postsPath = '../posts/data/posts.json';
+        this.categories = new Set();
     }
 
     async init() {
-        await this.loadMetadata();
-    }
-
-    async loadMetadata() {
         try {
-            const response = await fetch('/posts/content/metadata.json');
-            this.metadata = await response.json();
+            await this.loadPosts();
+            this.processPosts();
         } catch (error) {
-            console.error('Failed to load post metadata:', error);
-            this.metadata = { articles: [], categories: [], tags: [] };
-        }
-    }
-
-    async getArticle(id) {
-        // 检查缓存
-        if (this.cache.has(id)) {
-            return this.cache.get(id);
-        }
-
-        const articleMeta = this.metadata.articles.find(article => article.id === id);
-        if (!articleMeta) {
-            throw new Error('Article not found');
-        }
-
-        try {
-            const response = await fetch(`/posts/content/${articleMeta.path}`);
-            const markdown = await response.text();
-            
-            const article = {
-                ...articleMeta,
-                content: markdown,
-                cover: articleMeta.cover || this.getDefaultCover()
-            };
-
-            // 存入缓存
-            this.cache.set(id, article);
-            return article;
-        } catch (error) {
-            console.error('Failed to load article:', error);
+            console.error('Failed to initialize PostManager:', error);
             throw error;
         }
     }
 
-    async getArticlesByCategory(category) {
-        return this.metadata.articles.filter(article => 
-            category === 'all' || article.category === category
-        );
+    async loadPosts() {
+        try {
+            const response = await fetch(this.postsPath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            this.posts = await response.json();
+        } catch (error) {
+            console.error('Error loading posts:', error);
+            throw error;
+        }
     }
 
-    async getArticlesByTag(tag) {
-        return this.metadata.articles.filter(article => 
-            article.tags.includes(tag)
-        );
+    processPosts() {
+        // 处理文章数据
+        this.posts = this.posts.map(post => ({
+            ...post,
+            date: new Date(post.date),
+            url: this.generatePostUrl(post)
+        }));
+
+        // 按日期排序（最新的在前）
+        this.posts.sort((a, b) => b.date - a.date);
+
+        // 收集所有分类
+        this.posts.forEach(post => {
+            if (post.category) {
+                this.categories.add(post.category);
+            }
+        });
     }
 
-    async searchArticles(keyword) {
-        keyword = keyword.toLowerCase();
-        return this.metadata.articles.filter(article => 
-            article.title.toLowerCase().includes(keyword) ||
-            article.summary.toLowerCase().includes(keyword) ||
-            article.tags.some(tag => tag.toLowerCase().includes(keyword))
+    generatePostUrl(post) {
+        // 根据文章标题生成 URL 友好的字符串
+        const slug = post.title
+            .toLowerCase()
+            .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        return `/posts/detail.html?id=${post.id}`;
+    }
+
+    getAllPosts() {
+        return this.posts;
+    }
+
+    getRecentPosts(count = 5) {
+        return this.posts.slice(0, count);
+    }
+
+    getPostById(id) {
+        return this.posts.find(post => post.id === id);
+    }
+
+    getPostsByCategory(category) {
+        return category === 'all' 
+            ? this.posts 
+            : this.posts.filter(post => post.category === category);
+    }
+
+    searchPosts(query) {
+        const searchTerm = query.toLowerCase();
+        return this.posts.filter(post => 
+            post.title.toLowerCase().includes(searchTerm) ||
+            post.description.toLowerCase().includes(searchTerm) ||
+            post.content.toLowerCase().includes(searchTerm)
         );
     }
 
     getCategories() {
-        return this.metadata.categories;
+        return Array.from(this.categories);
     }
 
-    getTags() {
-        return this.metadata.tags;
+    getNextPost(currentId) {
+        const currentIndex = this.posts.findIndex(post => post.id === currentId);
+        return currentIndex > 0 ? this.posts[currentIndex - 1] : null;
     }
 
-    getDefaultCover() {
-        return '/posts/assets/images/default-cover.jpg';
+    getPreviousPost(currentId) {
+        const currentIndex = this.posts.findIndex(post => post.id === currentId);
+        return currentIndex < this.posts.length - 1 ? this.posts[currentIndex + 1] : null;
     }
 
-    async getRecentPosts(count = 3) {
-        // 按日期排序并返回指定数量的文章
-        return this.metadata.articles
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
+    getRelatedPosts(post, count = 3) {
+        return this.posts
+            .filter(p => 
+                p.id !== post.id && 
+                (p.category === post.category || 
+                 p.tags.some(tag => post.tags.includes(tag)))
+            )
             .slice(0, count);
+    }
+
+    async getPostContent(post) {
+        try {
+            const response = await fetch(post.contentPath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.text();
+        } catch (error) {
+            console.error('Error loading post content:', error);
+            throw error;
+        }
+    }
+
+    formatDate(date) {
+        return date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    createPostCard(post) {
+        return `
+            <article class="post-card">
+                <img src="${post.cover}" alt="${post.title}" 
+                     onerror="this.src='../assets/images/default-cover.jpg'"
+                     loading="lazy">
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span class="category">
+                            <i class="fas fa-folder"></i> ${post.category}
+                        </span>
+                        <span class="date">
+                            <i class="fas fa-calendar"></i> ${this.formatDate(post.date)}
+                        </span>
+                    </div>
+                    <h3>${post.title}</h3>
+                    <p>${post.description}</p>
+                    <a href="${post.url}" class="read-more">
+                        阅读更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+        `;
+    }
+
+    handleError(error) {
+        console.error('PostManager Error:', error);
+        return {
+            title: '加载失败',
+            description: '文章加载失败，请稍后重试',
+            error: true
+        };
     }
 } 

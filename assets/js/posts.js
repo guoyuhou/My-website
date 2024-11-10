@@ -5,154 +5,170 @@ class BlogPosts {
         this.postsPerPage = 9;
         this.currentCategory = 'all';
         this.searchTerm = '';
+        this.posts = [];
     }
 
     async init() {
-        await this.postManager.init();
-        this.setupEventListeners();
-        await this.renderPosts();
-        this.renderCategories();
-        this.renderPagination();
-    }
-
-    async renderPosts() {
         try {
-            let posts;
-            if (this.searchTerm) {
-                posts = await this.postManager.searchArticles(this.searchTerm);
-            } else {
-                posts = await this.postManager.getArticlesByCategory(this.currentCategory);
-            }
-
-            const container = document.querySelector('.posts-container');
-            if (!posts.length) {
-                container.innerHTML = `
-                    <div class="no-posts">
-                        <p>暂无文章</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const start = (this.currentPage - 1) * this.postsPerPage;
-            const paginatedPosts = posts.slice(start, start + this.postsPerPage);
-
-            container.innerHTML = paginatedPosts.map(post => `
-                <article class="post-card fade-in">
-                    <a href="/posts/detail.html?id=${post.id}">
-                        <img src="${post.cover}" alt="${post.title}" 
-                             onerror="this.src='/assets/images/default-cover.jpg'">
-                        <div class="post-content">
-                            <h3>${post.title}</h3>
-                            <p class="date">${post.date}</p>
-                            <p>${post.summary}</p>
-                            <div class="tags">
-                                ${post.tags.map(tag => 
-                                    `<span class="tag">${tag}</span>`
-                                ).join('')}
-                            </div>
-                        </div>
-                    </a>
-                </article>
-            `).join('');
+            await this.postManager.init();
+            this.posts = await this.postManager.getAllPosts();
+            this.setupEventListeners();
+            await this.renderPosts();
+            this.renderCategories();
+            this.setupIntersectionObserver();
         } catch (error) {
-            console.error('Failed to render posts:', error);
-            const container = document.querySelector('.posts-container');
-            container.innerHTML = `
-                <div class="error-message">
-                    <p>加载文章失败，请稍后重试</p>
-                </div>
-            `;
+            console.error('Failed to initialize blog posts:', error);
+            this.handleError();
         }
-    }
-
-    renderCategories() {
-        const categories = this.postManager.getCategories();
-        const container = document.querySelector('.categories');
-        
-        container.innerHTML = `
-            <button class="category-btn ${this.currentCategory === 'all' ? 'active' : ''}" 
-                    data-category="all">
-                全部
-            </button>
-            ${categories.map(category => `
-                <button class="category-btn ${this.currentCategory === category ? 'active' : ''}" 
-                        data-category="${category}">
-                    ${category}
-                </button>
-            `).join('')}
-        `;
     }
 
     setupEventListeners() {
         // 搜索功能
         const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('input', (e) => {
-            this.searchTerm = e.target.value.toLowerCase();
+        searchInput.addEventListener('input', this.debounce(() => {
+            this.searchTerm = searchInput.value;
             this.currentPage = 1;
             this.renderPosts();
-            this.renderPagination();
-        });
+        }, 300));
 
-        // 分类筛选
-        const categoryBtns = document.querySelectorAll('.category-btn');
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.currentCategory = btn.dataset.category;
+        // 分类切换
+        document.querySelector('.categories').addEventListener('click', (e) => {
+            if (e.target.classList.contains('category-tag')) {
+                document.querySelectorAll('.category-tag').forEach(tag => {
+                    tag.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                this.currentCategory = e.target.dataset.category;
                 this.currentPage = 1;
                 this.renderPosts();
-                this.renderPagination();
-            });
+            }
         });
     }
 
-    renderPagination() {
+    setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.post-card').forEach(card => {
+            observer.observe(card);
+        });
+    }
+
+    async renderPosts() {
+        const container = document.querySelector('.posts-container');
         const filteredPosts = this.filterPosts();
-        const totalPages = Math.ceil(filteredPosts.length / this.postsPerPage);
-        const pagination = document.querySelector('.pagination');
+        const start = (this.currentPage - 1) * this.postsPerPage;
+        const end = start + this.postsPerPage;
+        const postsToShow = filteredPosts.slice(start, end);
 
-        let paginationHTML = '';
-        if (totalPages > 1) {
-            paginationHTML += `
-                <button ${this.currentPage === 1 ? 'disabled' : ''} 
-                        onclick="blogPosts.changePage(${this.currentPage - 1})">
-                    上一页
-                </button>
-            `;
+        container.innerHTML = postsToShow.length ? postsToShow.map(post => this.createPostCard(post)).join('') 
+            : '<div class="no-posts">没有找到相关文章</div>';
 
-            for (let i = 1; i <= totalPages; i++) {
-                paginationHTML += `
-                    <button class="${this.currentPage === i ? 'active' : ''}"
-                            onclick="blogPosts.changePage(${i})">
-                        ${i}
-                    </button>
-                `;
-            }
+        this.renderPagination(filteredPosts.length);
+        this.setupIntersectionObserver();
+    }
 
-            paginationHTML += `
-                <button ${this.currentPage === totalPages ? 'disabled' : ''} 
-                        onclick="blogPosts.changePage(${this.currentPage + 1})">
-                    下一页
-                </button>
-            `;
+    filterPosts() {
+        return this.posts.filter(post => {
+            const matchesSearch = post.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                                post.description.toLowerCase().includes(this.searchTerm.toLowerCase());
+            const matchesCategory = this.currentCategory === 'all' || post.category === this.currentCategory;
+            return matchesSearch && matchesCategory;
+        });
+    }
+
+    renderCategories() {
+        const categories = ['all', ...new Set(this.posts.map(post => post.category))];
+        const container = document.querySelector('.categories');
+        
+        container.innerHTML = categories.map(category => `
+            <div class="category-tag ${category === this.currentCategory ? 'active' : ''}" 
+                 data-category="${category}">
+                ${category === 'all' ? '全部' : category}
+            </div>
+        `).join('');
+    }
+
+    renderPagination(totalPosts) {
+        const totalPages = Math.ceil(totalPosts / this.postsPerPage);
+        const container = document.querySelector('.pagination');
+        
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
         }
 
-        pagination.innerHTML = paginationHTML;
+        container.innerHTML = `
+            <button ${this.currentPage === 1 ? 'disabled' : ''} onclick="blogPosts.changePage(${this.currentPage - 1})">
+                上一页
+            </button>
+            <span>${this.currentPage} / ${totalPages}</span>
+            <button ${this.currentPage === totalPages ? 'disabled' : ''} onclick="blogPosts.changePage(${this.currentPage + 1})">
+                下一页
+            </button>
+        `;
     }
 
     changePage(page) {
         this.currentPage = page;
         this.renderPosts();
-        this.renderPagination();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({
+            top: document.querySelector('.posts-container').offsetTop - 100,
+            behavior: 'smooth'
+        });
+    }
+
+    createPostCard(post) {
+        return `
+            <article class="post-card">
+                <img src="${post.cover}" alt="${post.title}" onerror="this.src='../assets/images/default-cover.jpg'">
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span><i class="fas fa-folder"></i> ${post.category}</span>
+                        <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}</span>
+                    </div>
+                    <h3>${post.title}</h3>
+                    <p>${post.description}</p>
+                    <a href="${post.url}" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+        `;
+    }
+
+    handleError() {
+        const container = document.querySelector('.posts-container');
+        container.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>加载文章失败，请稍后重试</p>
+                <button onclick="location.reload()">重新加载</button>
+            </div>
+        `;
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 }
 
-// 初始化博客文章
-const blogPosts = new BlogPosts(); 
-
+// 初始化
+let blogPosts;
 document.addEventListener('DOMContentLoaded', () => {
+    blogPosts = new BlogPosts();
     blogPosts.init();
 });

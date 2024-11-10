@@ -1,122 +1,174 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // 主题切换功能
-    setupThemeToggle();
-    
-    // 移动端菜单
-    setupMobileMenu();
-    
-    // 只在首页加载最新文章
-    if (document.querySelector('.posts-grid')) {
-        loadRecentPosts();
+// 主题管理类
+class ThemeManager {
+    constructor() {
+        this.themeToggle = document.querySelector('.theme-toggle');
+        this.prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        this.currentTheme = localStorage.getItem('theme');
+        this.init();
     }
 
-    loadSkills();
-    setupScrollAnimations();
-});
+    init() {
+        // 初始化主题
+        if (this.currentTheme) {
+            document.body.setAttribute('data-theme', this.currentTheme);
+            this.updateThemeIcon(this.currentTheme === 'dark');
+        } else if (this.prefersDarkScheme.matches) {
+            document.body.setAttribute('data-theme', 'dark');
+            this.updateThemeIcon(true);
+        }
 
-function setupThemeToggle() {
-    const themeToggle = document.querySelector('.theme-toggle');
-    themeToggle.addEventListener('click', () => {
-        document.body.setAttribute(
-            'data-theme',
-            document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
-        );
-        localStorage.setItem('theme', document.body.getAttribute('data-theme'));
-    });
+        // 添加事件监听器
+        this.themeToggle.addEventListener('click', () => this.toggleTheme());
+        this.prefersDarkScheme.addEventListener('change', (e) => this.handleSystemThemeChange(e));
+    }
+
+    toggleTheme() {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        this.updateThemeIcon(!isDark);
+    }
+
+    updateThemeIcon(isDark) {
+        const icon = this.themeToggle.querySelector('i');
+        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    handleSystemThemeChange(e) {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            this.updateThemeIcon(e.matches);
+        }
+    }
 }
 
-function setupMobileMenu() {
-    const mobileMenu = document.querySelector('.mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
-    
-    mobileMenu.addEventListener('click', () => {
-        mobileMenu.classList.toggle('active');
-        navLinks.classList.toggle('active');
-    });
-}
+// 导航管理类
+class NavigationManager {
+    constructor() {
+        this.navbar = document.querySelector('.navbar');
+        this.mobileMenu = document.querySelector('.mobile-menu');
+        this.navLinks = document.querySelector('.nav-links');
+        this.lastScrollTop = 0;
+        this.init();
+    }
 
-async function loadRecentPosts() {
-    try {
-        const postManager = new PostManager();
-        await postManager.init();
-        const recentPosts = await postManager.getRecentPosts(3); // 获取最新的3篇文章
+    init() {
+        // 移动端菜单切换
+        this.mobileMenu.addEventListener('click', () => this.toggleMobileMenu());
         
-        const postsGrid = document.querySelector('.posts-grid');
-        if (postsGrid) {
-            postsGrid.innerHTML = recentPosts.map(post => `
-                <article class="post-card fade-in">
-                    <a href="/posts/detail.html?id=${post.id}">
-                        <img src="${post.cover}" alt="${post.title}" 
-                             onerror="this.src='/assets/images/default-cover.jpg'">
-                        <div class="post-content">
-                            <h3>${post.title}</h3>
-                            <p class="date">${post.date}</p>
-                            <p>${post.summary}</p>
-                        </div>
-                    </a>
-                </article>
-            `).join('');
-        }
-    } catch (error) {
-        console.error('Failed to load recent posts:', error);
-        const postsGrid = document.querySelector('.posts-grid');
-        if (postsGrid) {
-            postsGrid.innerHTML = `
-                <div class="error-message">
-                    <p>加载最新文章失败，请稍后重试</p>
-                </div>
-            `;
-        }
-    }
-}
+        // 滚动处理
+        window.addEventListener('scroll', () => this.handleScroll());
+        
+        // 点击导航链接时关闭移动端菜单
+        this.navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => this.closeMobileMenu());
+        });
 
-function loadSkills() {
-    const skills = [
-        {
-            icon: 'fa-code',
-            title: 'Web 开发',
-            description: '精通 HTML5, CSS3, JavaScript 等前端技术'
-        },
-        {
-            icon: 'fa-mobile-alt',
-            title: '响应式设计',
-            description: '创建适配各种设备的现代化网页'
-        },
-        {
-            icon: 'fa-server',
-            title: '后端开发',
-            description: '熟悉 Node.js, Python 等后端技术'
-        },
-        {
-            icon: 'fa-database',
-            title: '数据库',
-            description: '掌握 MySQL, MongoDB 等数据库技术'
-        }
-    ];
-
-    const skillsGrid = document.querySelector('.skills-grid');
-    if (skillsGrid) {
-        skillsGrid.innerHTML = skills.map((skill, index) => `
-            <div class="skill-card" style="animation-delay: ${index * 0.1}s">
-                <i class="fas ${skill.icon} skill-icon"></i>
-                <h3>${skill.title}</h3>
-                <p>${skill.description}</p>
-            </div>
-        `).join('');
-    }
-}
-
-// 添加滚动动画
-function setupScrollAnimations() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+        // 点击外部时关闭移动端菜单
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container')) {
+                this.closeMobileMenu();
             }
         });
-    }, { threshold: 0.1 });
+    }
 
-    document.querySelectorAll('.post-card, .skill-card').forEach(el => {
-        observer.observe(el);
-    });
-} 
+    toggleMobileMenu() {
+        this.mobileMenu.classList.toggle('active');
+        this.navLinks.classList.toggle('active');
+    }
+
+    closeMobileMenu() {
+        this.mobileMenu.classList.remove('active');
+        this.navLinks.classList.remove('active');
+    }
+
+    handleScroll() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // 导航栏显示/隐藏逻辑
+        if (scrollTop > this.lastScrollTop && scrollTop > 100) {
+            this.navbar.style.transform = 'translateY(-100%)';
+        } else {
+            this.navbar.style.transform = 'translateY(0)';
+        }
+        
+        this.lastScrollTop = scrollTop;
+    }
+}
+
+// 动画管理类
+class AnimationManager {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.setupScrollAnimation();
+        this.setupLazyLoading();
+    }
+
+    setupScrollAnimation() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
+    }
+
+    setupLazyLoading() {
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+
+        document.querySelectorAll('img.lazy').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+    new ThemeManager();
+    new NavigationManager();
+    new AnimationManager();
+});
+
+// 工具函数
+const utils = {
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    formatDate(date) {
+        return new Date(date).toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+}; 
