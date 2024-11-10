@@ -279,7 +279,7 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                this.postsPath = '/posts/content/metadata.json';
+                this.postsPath = '../content/metadata.json';
             }
 
             async init() {
@@ -288,6 +288,7 @@
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     this.posts = data.articles;
+                    console.log('Loaded posts:', this.posts);
                 } catch (error) {
                     console.error('Failed to load posts:', error);
                     throw error;
@@ -300,9 +301,22 @@
 
             async getPostContent(post) {
                 try {
-                    const response = await fetch(`/posts/content/${post.path}`);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    return await response.text();
+                    if (!post || !post.path) {
+                        throw new Error('Invalid post data');
+                    }
+                    
+                    const contentPath = `../content/${post.path}`;
+                    console.log('Loading post from:', contentPath);
+                    
+                    const response = await fetch(contentPath);
+                    if (!response.ok) {
+                        console.error(`Failed to load post from ${contentPath}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const content = await response.text();
+                    console.log('Post content loaded successfully');
+                    return content;
                 } catch (error) {
                     console.error('Error loading post content:', error);
                     throw error;
@@ -315,7 +329,7 @@
             constructor() {
                 this.postManager = new PostManager();
                 this.postId = new URLSearchParams(window.location.search).get('id');
-                console.log('Post ID:', this.postId); // 调试日志
+                console.log('Post ID:', this.postId);
             }
 
             async init() {
