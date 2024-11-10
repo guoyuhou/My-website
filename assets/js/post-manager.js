@@ -1,7 +1,7 @@
 class PostManager {
     constructor() {
         this.posts = [];
-        this.postsPath = '../posts/content/metadata.json';
+        this.postsPath = '/posts/content/metadata.json';
         this.categories = new Set();
     }
 
@@ -54,9 +54,8 @@ class PostManager {
     }
 
     generatePostUrl(post) {
-        // 使用文章的路径来生成URL
-        const basePath = '/posts/content/';
-        return `${basePath}${post.path}`; // 直接使用文章的markdown文件路径
+        // 生成文章详情页的URL
+        return `/posts/detail.html?id=${post.id}`;
     }
 
     getAllPosts() {
@@ -112,7 +111,9 @@ class PostManager {
 
     async getPostContent(post) {
         try {
-            const response = await fetch(post.contentPath);
+            // 构建完整的文章路径
+            const contentPath = `/posts/content/${post.path}`;
+            const response = await fetch(contentPath);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

@@ -69,14 +69,18 @@ class HomePage {
     createPostCard(post) {
         return `
             <article class="post-card">
-                <img src="${post.cover}" alt="${post.title}" onerror="this.src='assets/images/default-cover.jpg'">
+                <img src="${post.cover}" alt="${post.title}" onerror="this.src='/assets/images/default-cover.jpg'">
                 <div class="post-content">
                     <div class="post-meta">
-                        <span class="date"><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}</span>
+                        <span class="date">
+                            <i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}
+                        </span>
                     </div>
                     <h3>${post.title}</h3>
-                    <p>${post.description}</p>
-                    <a href="/posts/detail.html?id=${post.id}" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    <p>${post.summary}</p>
+                    <a href="${this.postManager.generatePostUrl(post)}" class="read-more">
+                        阅读更多 <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
             </article>
         `;

@@ -136,15 +136,17 @@ class BlogPosts {
     createPostCard(post) {
         return `
             <article class="post-card">
-                <img src="${post.cover}" alt="${post.title}" onerror="this.src='../assets/images/default-cover.jpg'">
+                <img src="${post.cover}" alt="${post.title}" onerror="this.src='/assets/images/default-cover.jpg'">
                 <div class="post-content">
                     <div class="post-meta">
                         <span><i class="fas fa-folder"></i> ${post.category}</span>
                         <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}</span>
                     </div>
                     <h3>${post.title}</h3>
-                    <p>${post.description}</p>
-                    <a href="${post.url}" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    <p>${post.summary}</p>
+                    <a href="${this.postManager.generatePostUrl(post)}" class="read-more">
+                        阅读更多 <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
             </article>
         `;
