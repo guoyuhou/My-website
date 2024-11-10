@@ -144,9 +144,29 @@ class PostDetail {
     }
 
     setupComments() {
-        // 这里可以集成第三方评论系统
-        // 例如：Disqus, Gitalk, Valine 等
+        // 监听主题变化，同步更新评论区主题
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    const theme = document.body.getAttribute('data-theme');
+                    const utterances = document.querySelector('.utterances-frame');
+                    if (utterances) {
+                        const message = {
+                            type: 'set-theme',
+                            theme: theme === 'dark' ? 'github-dark' : 'github-light'
+                        };
+                        utterances.contentWindow.postMessage(message, 'https://utteranc.es');
+                    }
+                }
+            });
+        });
+
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
     }
+
 }
 
 // 初始化文章详情页

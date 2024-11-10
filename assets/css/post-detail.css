@@ -137,4 +137,28 @@
     .article-meta {
         flex-wrap: wrap;
     }
+}
+
+/* 评论区样式 */
+.article-comments {
+    margin-top: 4rem;
+    padding: 2rem;
+    background: var(--bg-color);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.article-comments h3 {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.comments-container {
+    margin-top: 1rem;
+}
+
+/* 适配深色模式 */
+[data-theme="dark"] .comments-container {
+    color-scheme: dark;
 } 
