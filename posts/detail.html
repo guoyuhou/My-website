@@ -285,6 +285,9 @@
                 const currentPath = window.location.pathname;
                 this.basePath = '/posts';
                 this.postsPath = `${this.basePath}/content/metadata.json`;
+                
+                // 添加调试信息
+                console.log('PostManager initialized with base path:', this.basePath);
             }
 
             async init() {
@@ -325,16 +328,16 @@
                         `/content/${post.path}`
                     ];
                     
-                    console.log('Trying paths:', paths);
+                    console.log('Trying to load post:', post.id);
+                    console.log('Attempting paths:', paths);
                     
                     // 尝试所有可能的路径
                     for (const path of paths) {
                         try {
-                            console.log('Attempting to load from:', path);
                             const response = await fetch(path);
                             if (response.ok) {
                                 const content = await response.text();
-                                console.log('Successfully loaded from:', path);
+                                console.log('Successfully loaded post from:', path);
                                 return content;
                             }
                         } catch (e) {
@@ -342,10 +345,23 @@
                         }
                     }
                     
-                    throw new Error('Could not load post content from any path');
+                    throw new Error(`Could not load post content for: ${post.id}`);
                 } catch (error) {
                     console.error('Error loading post content:', error);
                     throw error;
+                }
+            }
+
+            // 添加一个辅助方法来验证所有文章的可访问性
+            async validateAllPosts() {
+                console.log('Validating all posts...');
+                for (const post of this.posts) {
+                    try {
+                        const content = await this.getPostContent(post);
+                        console.log(`✅ Post ${post.id} is accessible`);
+                    } catch (error) {
+                        console.error(`❌ Post ${post.id} is not accessible:`, error);
+                    }
                 }
             }
         }
