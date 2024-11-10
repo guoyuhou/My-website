@@ -279,15 +279,24 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                // 使用相对路径
-                this.postsPath = '../content/metadata.json';
+                // 获取当前页面的路径
+                const currentPath = window.location.pathname;
+                // 计算到根目录的相对路径
+                this.basePath = currentPath.startsWith('/posts/') ? '/posts' : '';
+                this.postsPath = `${this.basePath}/content/metadata.json`;
             }
 
             async init() {
                 try {
+                    console.log('Current pathname:', window.location.pathname);
+                    console.log('Base path:', this.basePath);
                     console.log('Attempting to load metadata from:', this.postsPath);
+                    
                     const response = await fetch(this.postsPath);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        console.error(`Failed to load metadata. Status: ${response.status}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     const data = await response.json();
                     this.posts = data.articles;
                     console.log('Successfully loaded posts:', this.posts);
@@ -307,8 +316,8 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 使用相对路径
-                    const contentPath = `../content/${post.path}`;
+                    // 使用基础路径构建完整路径
+                    const contentPath = `${this.basePath}/content/${post.path}`;
                     console.log('Loading post from:', contentPath);
                     
                     const response = await fetch(contentPath);
