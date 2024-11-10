@@ -279,7 +279,7 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                this.postsPath = './content/metadata.json';
+                this.postsPath = '/posts/content/metadata.json';
             }
 
             async init() {
@@ -306,7 +306,7 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    const contentPath = `./content/${post.path}`;
+                    const contentPath = `/posts/content/${post.path}`;
                     console.log('Loading post from:', contentPath);
                     
                     const response = await fetch(contentPath);
