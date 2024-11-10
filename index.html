@@ -509,80 +509,15 @@
     <footer>
         <div class="footer-content">
             <div class="social-links">
-                <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://github.com/guoyuhou" target="_blank"><i class="fab fa-github"></i></a>
                 <!-- 添加其他社交体链接 -->
             </div>
             <p>&copy; 2024 Diarina. All rights reserved.</p>
         </div>
     </footer>
 
-    <script>
-        // 主题切换
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.querySelector('.theme-toggle');
-            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            // 检查本地存储的主题设置
-            const currentTheme = localStorage.getItem('theme');
-            if (currentTheme) {
-                document.body.setAttribute('data-theme', currentTheme);
-                themeToggle.querySelector('i').classList.toggle('fa-sun', currentTheme === 'dark');
-                themeToggle.querySelector('i').classList.toggle('fa-moon', currentTheme === 'light');
-            } else if (prefersDarkScheme.matches) {
-                document.body.setAttribute('data-theme', 'dark');
-                themeToggle.querySelector('i').classList.add('fa-sun');
-            }
-
-            // 主题切换事件
-            themeToggle.addEventListener('click', () => {
-                const isDark = document.body.getAttribute('data-theme') === 'dark';
-                document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-                localStorage.setItem('theme', isDark ? 'light' : 'dark');
-                themeToggle.querySelector('i').classList.toggle('fa-sun');
-                themeToggle.querySelector('i').classList.toggle('fa-moon');
-            });
-        });
-
-        // 移动端菜单
-        document.querySelector('.mobile-menu').addEventListener('click', function() {
-            this.classList.toggle('active');
-            document.querySelector('.nav-links').classList.toggle('active');
-        });
-
-        // 技能卡片数据
-        const skills = [
-            { icon: 'fa-brands fa-html5', name: 'HTML5', description: '现代化的HTML5开发' },
-            { icon: 'fa-brands fa-css3-alt', name: 'CSS3', description: '响应式设计与动画' },
-            { icon: 'fa-brands fa-js', name: 'JavaScript', description: '现代JavaScript开发' },
-            { icon: 'fa-brands fa-react', name: 'React', description: '前端框架开发' }
-        ];
-
-        // 渲染技能卡片
-        document.addEventListener('DOMContentLoaded', function() {
-            const skillsGrid = document.querySelector('.skills-grid');
-            skillsGrid.innerHTML = skills.map(skill => `
-                <div class="skill-card">
-                    <i class="${skill.icon}"></i>
-                    <h3>${skill.name}</h3>
-                    <p>${skill.description}</p>
-                </div>
-            `).join('');
-        });
-
-        // 滚动动画
-        document.addEventListener('scroll', function() {
-            const cards = document.querySelectorAll('.post-card, .skill-card');
-            cards.forEach(card => {
-                const cardTop = card.getBoundingClientRect().top;
-                const windowHeight = window.innerHeight;
-                if (cardTop < windowHeight * 0.9) {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }
-            });
-        });
-    </script>
-    <script src="assets/js/post-manager.js"></script>  <!-- 用于加载最新文章 -->
+    <script src="assets/js/post-manager.js"></script>
+    <script src="assets/js/home.js"></script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>
