@@ -279,11 +279,9 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                // 获取当前页面的路径
                 const currentPath = window.location.pathname;
-                // 计算到根目录的相对路径
-                this.basePath = currentPath.startsWith('/posts/') ? '/posts' : '';
-                this.postsPath = `${this.basePath}/content/metadata.json`;
+                this.basePath = currentPath.startsWith('/posts/') ? '/posts/content' : '/content';
+                this.postsPath = `${this.basePath}/metadata.json`;
             }
 
             async init() {
@@ -316,17 +314,18 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 修改路径构建方式
-                    const contentPath = post.path.startsWith('/') 
-                        ? post.path 
-                        : `${this.basePath}/content/${post.path}`;
-                        
-                    console.log('Post path from metadata:', post.path);
-                    console.log('Constructed content path:', contentPath);
+                    // 添加调试信息
+                    console.log('Checking post data:', post);
+                    console.log('Base path:', this.basePath);
+                    
+                    const contentPath = `${this.basePath}/${post.path}`;
+                    console.log('Attempting to load from:', contentPath);
                     
                     const response = await fetch(contentPath);
                     if (!response.ok) {
                         console.error(`Failed to load post from ${contentPath}`);
+                        // 添加更详细的错误信息
+                        console.error(`File system path should be: /posts/content/${post.path}`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
