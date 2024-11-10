@@ -5,58 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if page.title %}{{ page.title }} - {% endif %}Diarina</title>
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">Diarina</a>
             <div class="nav-links">
-                <a href="/" {% if page.url == "/" %}class="active"{% endif %}>首页</a>
-                <a href="/blog" {% if page.url contains "/blog" %}class="active"{% endif %}>博客</a>
-                <a href="/projects" {% if page.url contains "/projects" %}class="active"{% endif %}>项目</a>
-                <a href="/about" {% if page.url contains "/about" %}class="active"{% endif %}>关于</a>
+                <a href="/blog">博客</a>
+                <a href="/projects">项目</a>
+                <a href="/about">关于</a>
+                <a href="/contact">联系</a>
             </div>
         </div>
     </nav>
 
-    <!-- 主要内容区域 -->
-    <main class="main-content">
-        {{ content }}
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>关于 Diarina</h3>
-                    <p>分享技术见解，记录学习心得</p>
-                </div>
-                <div class="footer-section">
-                    <h3>快速链接</h3>
-                    <ul>
-                        <li><a href="/archive">文章归档</a></li>
-                        <li><a href="/tags">标签云</a></li>
-                        <li><a href="/about">关于我</a></li>
-                        <li><a href="/contact">联系方式</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>关注我</h3>
-                    <div class="social-links">
-                        <a href="#" target="_blank"><i class="fab fa-github"></i></a>
-                        <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                        <a href="#" target="_blank"><i class="fab fa-weibo"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; {{ site.time | date: '%Y' }} Diarina. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    {{ content }}
 
     <script src="/assets/js/main.js"></script>
 </body>

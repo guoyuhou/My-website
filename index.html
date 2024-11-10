@@ -299,47 +299,22 @@
     <section class="recent-posts">
         <h2 class="section-title">最新文章</h2>
         <div class="posts-grid">
+            {% for post in site.posts limit:3 %}
             <article class="post-card">
-                <div class="post-image" style="background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"></div>
+                <div class="post-image" style="background-image: url('{{ post.image }}')"></div>
                 <div class="post-content">
-                    <div class="post-meta">2024年3月15日</div>
+                    <div class="post-meta">{{ post.date | date: "%Y年%m月%d日" }}</div>
                     <div class="tags">
-                        <span class="tag">JavaScript</span>
-                        <span class="tag">前端开发</span>
+                        {% for tag in post.tags %}
+                        <span class="tag">{{ tag }}</span>
+                        {% endfor %}
                     </div>
-                    <h3 class="post-title">现代前端开发的工程化实践</h3>
-                    <p class="post-excerpt">探讨现代前端开发中的工程化实践，包括构建工具、自动化测试、CI/CD 等关键概念...</p>
-                    <a href="./posts/2024/modern-frontend-engineering.html" class="read-more">阅读更多</a>
+                    <h3 class="post-title">{{ post.title }}</h3>
+                    <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 100 }}</p>
+                    <a href="{{ post.url }}" class="read-more">阅读更多</a>
                 </div>
             </article>
-
-            <article class="post-card">
-                <div class="post-image" style="background-image: url('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"></div>
-                <div class="post-content">
-                    <div class="post-meta">2024年3月10日</div>
-                    <div class="tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">人工智能</span>
-                    </div>
-                    <h3 class="post-title">深入理解机器学习模型优化</h3>
-                    <p class="post-excerpt">从实践角度出发，详细讲解机器学习模型优化的各种技巧，包括参数调优、特征工程等核心概念，助你构建更高效的AI模型。</p>
-                    <a href="#" class="read-more">阅读更多</a>
-                </div>
-            </article>
-
-            <article class="post-card">
-                <div class="post-image" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"></div>
-                <div class="post-content">
-                    <div class="post-meta">2024年3月5日</div>
-                    <div class="tags">
-                        <span class="tag">架构设计</span>
-                        <span class="tag">系统优化</span>
-                    </div>
-                    <h3 class="post-title">微服务架构实战经验分享</h3>
-                    <p class="post-excerpt">基于实际项目经验，分享微服务架构的设计思路、实现方案和性能优化技巧，以及在大规模应用中的最佳实践。</p>
-                    <a href="#" class="read-more">阅读更多</a>
-                </div>
-            </article>
+            {% endfor %}
         </div>
     </section>
 

@@ -3,14 +3,13 @@ description: 技术博客与个人空间
 baseurl: ""
 url: "https://diarina.com"
 
-# 启用 markdown
-markdown: kramdown
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
+# 文章链接格式
+permalink: /posts/:year/:month/:day/:title/
 
-# 文章永久链接格式
-permalink: /posts/:year/:title.html
+# 启用的插件
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
 
 # 默认布局设置
 defaults:
@@ -19,4 +18,4 @@ defaults:
       path: ""
       type: "posts"
     values:
-      layout: "post" 
+      layout: "post"
