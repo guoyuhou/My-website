@@ -62,17 +62,25 @@ class BlogPosts {
     }
 
     async renderPosts() {
-        const container = document.querySelector('.posts-container');
-        const filteredPosts = this.filterPosts();
-        const start = (this.currentPage - 1) * this.postsPerPage;
-        const end = start + this.postsPerPage;
-        const postsToShow = filteredPosts.slice(start, end);
+        try {
+            const container = document.querySelector('.posts-container');
+            const filteredPosts = this.filterPosts();
+            if (!filteredPosts) {
+                throw new Error('Failed to filter posts');
+            }
+            const start = (this.currentPage - 1) * this.postsPerPage;
+            const end = start + this.postsPerPage;
+            const postsToShow = filteredPosts.slice(start, end);
 
-        container.innerHTML = postsToShow.length ? postsToShow.map(post => this.createPostCard(post)).join('') 
-            : '<div class="no-posts">没有找到相关文章</div>';
+            container.innerHTML = postsToShow.length ? postsToShow.map(post => this.createPostCard(post)).join('') 
+                : '<div class="no-posts">没有找到相关文章</div>';
 
-        this.renderPagination(filteredPosts.length);
-        this.setupIntersectionObserver();
+            this.renderPagination(filteredPosts.length);
+            this.setupIntersectionObserver();
+        } catch (error) {
+            console.error('Error rendering posts:', error);
+            this.handleError();
+        }
     }
 
     filterPosts() {

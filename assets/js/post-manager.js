@@ -1,7 +1,7 @@
 class PostManager {
     constructor() {
         this.posts = [];
-        this.postsPath = '../posts/data/posts.json';
+        this.postsPath = '../posts/content/metadata.json';
         this.categories = new Set();
     }
 
@@ -21,7 +21,13 @@ class PostManager {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            this.posts = await response.json();
+            const data = await response.json();
+            this.posts = data.articles.map(article => ({
+                ...article,
+                description: article.summary,
+                cover: article.cover || '../assets/images/default-cover.jpg',
+                contentPath: article.path
+            }));
         } catch (error) {
             console.error('Error loading posts:', error);
             throw error;
