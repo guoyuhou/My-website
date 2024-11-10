@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.querySelector('.posts-grid')) {
         loadRecentPosts();
     }
+
+    loadSkills();
+    setupScrollAnimations();
 });
 
 function setupThemeToggle() {
@@ -65,4 +68,55 @@ async function loadRecentPosts() {
             `;
         }
     }
+}
+
+function loadSkills() {
+    const skills = [
+        {
+            icon: 'fa-code',
+            title: 'Web 开发',
+            description: '精通 HTML5, CSS3, JavaScript 等前端技术'
+        },
+        {
+            icon: 'fa-mobile-alt',
+            title: '响应式设计',
+            description: '创建适配各种设备的现代化网页'
+        },
+        {
+            icon: 'fa-server',
+            title: '后端开发',
+            description: '熟悉 Node.js, Python 等后端技术'
+        },
+        {
+            icon: 'fa-database',
+            title: '数据库',
+            description: '掌握 MySQL, MongoDB 等数据库技术'
+        }
+    ];
+
+    const skillsGrid = document.querySelector('.skills-grid');
+    if (skillsGrid) {
+        skillsGrid.innerHTML = skills.map((skill, index) => `
+            <div class="skill-card" style="animation-delay: ${index * 0.1}s">
+                <i class="fas ${skill.icon} skill-icon"></i>
+                <h3>${skill.title}</h3>
+                <p>${skill.description}</p>
+            </div>
+        `).join('');
+    }
+}
+
+// 添加滚动动画
+function setupScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.post-card, .skill-card').forEach(el => {
+        observer.observe(el);
+    });
 } 
