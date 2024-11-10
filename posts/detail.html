@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博客文章 - Diarina</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>文章详情 - Diarina</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/post-detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <nav class="navbar">
@@ -29,46 +32,77 @@
     </nav>
 
     <main class="post-detail">
-        <article>
-            <header class="post-header">
-                <h1>{{ post.title }}</h1>
-                <div class="post-meta">
-                    <time datetime="{{ post.date }}">{{ post.date }}</time>
-                    {% if post.tags %}
-                    <div class="post-tags">
-                        {% for tag in post.tags %}
-                        <span class="tag">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+        <article class="article-content">
+            <header class="article-header">
+                <div class="article-meta">
+                    <span class="category"><i class="fas fa-folder"></i></span>
+                    <span class="date"><i class="fas fa-calendar"></i></span>
+                    <span class="reading-time"><i class="fas fa-clock"></i></span>
+                </div>
+                <h1></h1>
+                <div class="tags">
                 </div>
             </header>
-            
-            <div class="post-content">
-                {{ post.content | safe }}
+
+            <div class="article-body">
             </div>
 
-            <section class="article-comments">
-                <h3>评论</h3>
-                <div class="comments-container">
-                    <script src="https://utteranc.es/client.js"
-                            repo="guoyuhou/My-website"
-                            issue-term="pathname"
-                            label="comment"
-                            theme="preferred-color-scheme"
-                            crossorigin="anonymous"
-                            async>
-                    </script>
+            <footer class="article-footer">
+                <div class="share-buttons">
+                    <button onclick="share('twitter')">
+                        <i class="fab fa-twitter"></i> 分享到 Twitter
+                    </button>
+                    <button onclick="share('weibo')">
+                        <i class="fab fa-weibo"></i> 分享到微博
+                    </button>
                 </div>
-            </section>
+            </footer>
         </article>
+
+        <aside class="table-of-contents">
+            <div class="toc-container">
+                <h3>目录</h3>
+                <nav id="toc">
+                </nav>
+            </div>
+        </aside>
+
+        <section class="article-comments">
+            <h3>评论</h3>
+            <div class="comments-container">
+                <script src="https://utteranc.es/client.js"
+                        repo="your-username/diarina.com"
+                        issue-term="pathname"
+                        label="comment"
+                        theme="preferred-color-scheme"
+                        crossorigin="anonymous"
+                        async>
+                </script>
+            </div>
+        </section>
+
+        <nav class="post-navigation">
+            <div class="prev-post">
+            </div>
+            <div class="next-post">
+            </div>
+        </nav>
     </main>
 
     <footer>
         <div class="footer-content">
-            <p>&copy; 2023 Diarina. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/guoyuhou" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+            <p>&copy; 2024 Diarina. All rights reserved.</p>
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/components/prism-javascript.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/post-manager.js"></script>
+    <script src="../assets/js/post-detail.js"></script>
 </body>
 </html>
