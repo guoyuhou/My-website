@@ -30,42 +30,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 加载最新文章
-function loadRecentPosts() {
-    const posts = [
-        {
-            title: "构建现代化的个人博客",
-            date: "2024-03-15",
-            summary: "如何使用现代Web技术构建个人博客网站...",
-            image: "assets/images/blog-1.jpg"
-        },
-        {
-            title: "JavaScript 最佳实践",
-            date: "2024-03-10",
-            summary: "探讨JavaScript开发中的常见模式和最佳实践...",
-            image: "assets/images/blog-2.jpg"
-        },
-        // 可以添加更多文章
-    ];
-
+async function loadRecentPosts() {
+    const postManager = new PostManager();
+    await postManager.init();
+    const recentPosts = await postManager.getRecentPosts(3); // 获取最新的3篇文章
+    
     const postsGrid = document.querySelector('.posts-grid');
-    posts.forEach(post => {
-        const postElement = createPostCard(post);
-        postsGrid.appendChild(postElement);
-    });
-}
-
-function createPostCard(post) {
-    const article = document.createElement('article');
-    article.className = 'post-card fade-in';
-    article.innerHTML = `
-        <img src="${post.image}" alt="${post.title}">
-        <div class="post-content">
-            <h3>${post.title}</h3>
-            <p class="date">${post.date}</p>
-            <p>${post.summary}</p>
-        </div>
-    `;
-    return article;
+    if (postsGrid) {
+        postsGrid.innerHTML = recentPosts.map(post => `
+            <article class="post-card fade-in">
+                <a href="/posts/detail.html?id=${post.id}">
+                    <img src="${post.cover}" alt="${post.title}">
+                    <div class="post-content">
+                        <h3>${post.title}</h3>
+                        <p class="date">${post.date}</p>
+                        <p>${post.summary}</p>
+                    </div>
+                </a>
+            </article>
+        `).join('');
+    }
 }
 
 // 加载技能展示
