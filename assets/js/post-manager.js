@@ -80,4 +80,11 @@ class PostManager {
     getDefaultCover() {
         return '/posts/assets/images/default-cover.jpg';
     }
+
+    async getRecentPosts(count = 3) {
+        // 按日期排序并返回指定数量的文章
+        return this.metadata.articles
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, count);
+    }
 } 

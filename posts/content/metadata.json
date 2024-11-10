@@ -8,7 +8,7 @@
             "tags": ["博客", "随笔"],
             "summary": "这是我的第一篇博客文章，讲述了建立这个博客的初衷...",
             "path": "2024/03/hello-world.md",
-            "cover": "/posts/assets/images/hello-world-cover.jpg"
+            "cover": "/assets/images/default-cover.jpg"
         },
         {
             "id": "2024-03-build-personal-blog",
@@ -18,7 +18,7 @@
             "tags": ["Web开发", "教程", "GitHub Pages"],
             "summary": "详细介绍如何使用现代Web技术搭建个人博客网站...",
             "path": "2024/03/build-personal-blog.md",
-            "cover": "/posts/assets/images/blog-building-cover.jpg"
+            "cover": "/assets/images/default-cover.jpg"
         },
         {
             "id": "2024-03-javascript-best-practices",
@@ -28,7 +28,7 @@
             "tags": ["JavaScript", "编程", "最佳实践"],
             "summary": "总结了JavaScript开发中的重要最佳实践和常见陷阱...",
             "path": "2024/03/javascript-best-practices.md",
-            "cover": "/posts/assets/images/javascript-cover.jpg"
+            "cover": "/assets/images/default-cover.jpg"
         }
     ],
     "categories": [

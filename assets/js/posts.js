@@ -40,7 +40,8 @@ class BlogPosts {
             container.innerHTML = paginatedPosts.map(post => `
                 <article class="post-card fade-in">
                     <a href="/posts/detail.html?id=${post.id}">
-                        <img src="${post.cover}" alt="${post.title}">
+                        <img src="${post.cover}" alt="${post.title}" 
+                             onerror="this.src='/assets/images/default-cover.jpg'">
                         <div class="post-content">
                             <h3>${post.title}</h3>
                             <p class="date">${post.date}</p>
