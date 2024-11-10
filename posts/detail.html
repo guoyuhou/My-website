@@ -6,30 +6,124 @@
     <title>文章详情 - Diarina</title>
     <meta name="description" content="Diarina的技术博客文章">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <!-- 添加 Markdown 渲染器的样式 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css">
     <style>
+        /* 基础样式 */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --text-color: #1f2937;
+            --bg-color: #ffffff;
+            --card-bg: #f8fafc;
+            --nav-height: 4rem;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #60a5fa;
+            --secondary-color: #3b82f6;
+            --text-color: #f3f4f6;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-height);
+            background: var(--bg-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        /* 文章详情样式 */
         .post-detail {
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
-            margin-top: var(--nav-height);
+            margin-top: calc(var(--nav-height) + 2rem);
         }
 
         .post-header {
             text-align: center;
             margin-bottom: 2rem;
+            animation: fadeIn 0.8s ease;
         }
 
         .post-title {
             font-size: 2.5rem;
             margin-bottom: 1rem;
+            color: var(--text-color);
         }
 
         .post-meta {
             color: var(--text-color);
             opacity: 0.8;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .post-content {
@@ -37,19 +131,87 @@
             background: var(--card-bg);
             border-radius: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease;
         }
 
-        /* Markdown 内容样式 */
+        /* Markdown 样式覆盖 */
         .markdown-body {
             background-color: transparent !important;
             color: var(--text-color) !important;
+            font-family: inherit !important;
+        }
+
+        .markdown-body pre {
+            background-color: var(--card-bg) !important;
+        }
+
+        .markdown-body code {
+            color: var(--primary-color) !important;
+        }
+
+        /* 页脚样式 */
+        footer {
+            margin-top: 4rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            margin: 0 0.5rem;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .post-title {
+                font-size: 2rem;
+            }
+
+            .post-content {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- 导航栏 -->
     <nav class="navbar">
-        <!-- 与其他页面相同的导航栏内容 -->
+        <div class="nav-container">
+            <a href="/" class="logo">Diarina</a>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">首页</a></li>
+                <li><a href="/posts">博客</a></li>
+                <li><a href="/projects">项目</a></li>
+                <li><a href="/about">关于</a></li>
+            </ul>
+        </div>
     </nav>
 
     <main class="post-detail">
@@ -68,13 +230,87 @@
     </main>
 
     <footer>
-        <!-- 与其他页面相同的页脚内容 -->
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+            <p>&copy; 2024 Diarina. All rights reserved.</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/post-manager.js"></script>
     <script>
+        // 主题管理
+        class ThemeManager {
+            constructor() {
+                this.themeToggle = document.querySelector('.theme-toggle');
+                this.prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+                this.currentTheme = localStorage.getItem('theme');
+                this.init();
+            }
+
+            init() {
+                if (this.currentTheme) {
+                    document.body.setAttribute('data-theme', this.currentTheme);
+                    this.updateThemeIcon(this.currentTheme === 'dark');
+                } else if (this.prefersDarkScheme.matches) {
+                    document.body.setAttribute('data-theme', 'dark');
+                    this.updateThemeIcon(true);
+                }
+
+                this.themeToggle.addEventListener('click', () => this.toggleTheme());
+            }
+
+            toggleTheme() {
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                const newTheme = isDark ? 'light' : 'dark';
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                this.updateThemeIcon(!isDark);
+            }
+
+            updateThemeIcon(isDark) {
+                const icon = this.themeToggle.querySelector('i');
+                icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        // 文章管理
+        class PostManager {
+            constructor() {
+                this.posts = [];
+                this.postsPath = '/posts/content/metadata.json';
+            }
+
+            async init() {
+                try {
+                    const response = await fetch(this.postsPath);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    this.posts = data.articles;
+                } catch (error) {
+                    console.error('Failed to load posts:', error);
+                    throw error;
+                }
+            }
+
+            getPostById(id) {
+                return this.posts.find(post => post.id === id);
+            }
+
+            async getPostContent(post) {
+                try {
+                    const response = await fetch(`/posts/content/${post.path}`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.text();
+                } catch (error) {
+                    console.error('Error loading post content:', error);
+                    throw error;
+                }
+            }
+        }
+
+        // 文章详情页
         class PostDetail {
             constructor() {
                 this.postManager = new PostManager();
@@ -93,17 +329,15 @@
 
             async loadPost() {
                 const post = this.postManager.getPostById(this.postId);
-                if (!post) {
-                    throw new Error('Post not found');
-                }
+                if (!post) throw new Error('Post not found');
 
-                // 更新页面标题和元数据
                 document.title = `${post.title} - Diarina`;
                 document.querySelector('.post-title').textContent = post.title;
-                document.querySelector('.date').innerHTML = `<i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}`;
-                document.querySelector('.category').innerHTML = `<i class="fas fa-folder"></i> ${post.category}`;
+                document.querySelector('.date').innerHTML = 
+                    `<i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}`;
+                document.querySelector('.category').innerHTML = 
+                    `<i class="fas fa-folder"></i> ${post.category}`;
 
-                // 加载并渲染文章内容
                 const content = await this.postManager.getPostContent(post);
                 document.querySelector('.post-content').innerHTML = marked.parse(content);
             }
@@ -119,9 +353,10 @@
             }
         }
 
+        // 初始化
         document.addEventListener('DOMContentLoaded', () => {
-            const postDetail = new PostDetail();
-            postDetail.init();
+            new ThemeManager();
+            new PostDetail().init();
         });
     </script>
 </body>
