@@ -279,13 +279,12 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                // 添加调试信息
-                console.log('Document location:', document.location.href);
-                console.log('Window location:', window.location.href);
-                
-                const currentPath = window.location.pathname;
-                this.basePath = currentPath.startsWith('/posts/') ? '/posts/content' : '/content';
+                // 使用相对路径，因为 detail.html 和 content 在同一目录
+                this.basePath = './content';
                 this.postsPath = `${this.basePath}/metadata.json`;
+                
+                console.log('Base path:', this.basePath);
+                console.log('Posts path:', this.postsPath);
             }
 
             async init() {
@@ -318,32 +317,18 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 尝试不同的路径组合
-                    const possiblePaths = [
-                        `${this.basePath}/${post.path}`,
-                        `${this.basePath}/posts/${post.path}`,
-                        `/posts/${post.path}`,
-                        `/content/${post.path}`
-                    ];
+                    // 使用相对路径
+                    const contentPath = `${this.basePath}/${post.path}`;
+                    console.log('Loading post from:', contentPath);
                     
-                    console.log('Trying these paths:', possiblePaths);
-                    
-                    // 尝试所有可能的路径
-                    for (const path of possiblePaths) {
-                        try {
-                            console.log('Attempting path:', path);
-                            const response = await fetch(path);
-                            if (response.ok) {
-                                const content = await response.text();
-                                console.log('Successfully loaded from:', path);
-                                return content;
-                            }
-                        } catch (e) {
-                            console.log('Failed with path:', path);
-                        }
+                    const response = await fetch(contentPath);
+                    if (!response.ok) {
+                        console.error(`Failed to load post from ${contentPath}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
-                    throw new Error('Could not load post content from any path');
+                    const content = await response.text();
+                    return content;
                 } catch (error) {
                     console.error('Error loading post content:', error);
                     throw error;
