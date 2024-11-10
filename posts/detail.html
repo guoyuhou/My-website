@@ -279,10 +279,15 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                // 使用相对路径，因为 detail.html 和 content 在同一目录
-                this.basePath = './content';
-                this.postsPath = `${this.basePath}/metadata.json`;
+                // 获取当前页面的基础路径
+                const currentPath = window.location.pathname;
+                const pathParts = currentPath.split('/');
+                pathParts.pop(); // 移除 detail.html
+                this.basePath = pathParts.join('/');
+                this.postsPath = `${this.basePath}/content/metadata.json`;
                 
+                console.log('Current URL:', window.location.href);
+                console.log('Current pathname:', currentPath);
                 console.log('Base path:', this.basePath);
                 console.log('Posts path:', this.postsPath);
             }
@@ -317,13 +322,14 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 使用相对路径
-                    const contentPath = `${this.basePath}/${post.path}`;
+                    // 构建完整的文章路径
+                    const contentPath = `${this.basePath}/content/${post.path}`;
                     console.log('Loading post from:', contentPath);
                     
                     const response = await fetch(contentPath);
                     if (!response.ok) {
                         console.error(`Failed to load post from ${contentPath}`);
+                        console.error('Full URL:', new URL(contentPath, window.location.origin).href);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
