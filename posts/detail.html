@@ -316,9 +316,13 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 使用基础路径构建完整路径
-                    const contentPath = `${this.basePath}/content/${post.path}`;
-                    console.log('Loading post from:', contentPath);
+                    // 修改路径构建方式
+                    const contentPath = post.path.startsWith('/') 
+                        ? post.path 
+                        : `${this.basePath}/content/${post.path}`;
+                        
+                    console.log('Post path from metadata:', post.path);
+                    console.log('Constructed content path:', contentPath);
                     
                     const response = await fetch(contentPath);
                     if (!response.ok) {
