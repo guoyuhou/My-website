@@ -1,2 +1,10 @@
- include:
-  - "*.md"  
+include:
+  - "**/*.md"
+  - "**/*.markdown"
+
+# 添加更多配置以确保正确处理
+defaults:
+  - scope:
+      path: "posts/content"
+    values:
+      layout: null

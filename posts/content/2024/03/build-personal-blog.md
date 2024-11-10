@@ -3,6 +3,7 @@ title: 如何搭建个人博客网站
 date: 2024-03-20
 category: 技术
 tags: [Web开发, 教程, GitHub Pages]
+layout: null
 ---
 
 # 如何搭建个人博客网站
