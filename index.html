@@ -123,8 +123,8 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+            background: linear-gradient(135deg, #f6f8ff 0%, #f0f4ff 100%);
+            color: var(--text-color);
             position: relative;
             overflow: hidden;
         }
@@ -136,9 +136,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('assets/images/hero-pattern.svg');
-            opacity: 0.1;
-            animation: moveBackground 20s linear infinite;
+            background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
         }
 
         .hero-content {
@@ -150,55 +149,85 @@
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 4.5rem;
             margin-bottom: 1rem;
             line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
         .hero p {
-            font-size: 1.5rem;
-            opacity: 0.9;
+            font-size: 1.8rem;
+            opacity: 0.8;
+            margin-top: 1rem;
+            font-weight: 300;
         }
 
         /* 最新文章区域 */
         .recent-posts {
-            padding: 4rem 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            padding: 6rem 2rem;
+            background: var(--bg-color);
         }
 
         .recent-posts h2 {
             text-align: center;
-            margin-bottom: 3rem;
             font-size: 2.5rem;
-            color: var(--primary-color);
+            margin-bottom: 3rem;
+            color: var(--text-color);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .recent-posts h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
         }
 
         .posts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-bottom: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
 
         .post-card {
             background: var(--card-bg);
             border-radius: 1rem;
             overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: var(--transition);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: fadeIn 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         .post-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
         }
 
         .post-card img {
             width: 100%;
             height: 200px;
             object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .post-card:hover img {
+            transform: scale(1.05);
         }
 
         .post-content {
@@ -206,14 +235,47 @@
         }
 
         .post-content h3 {
+            font-size: 1.25rem;
             margin-bottom: 0.5rem;
             color: var(--text-color);
+            font-weight: 600;
         }
 
         .post-content .date {
-            color: var(--secondary-color);
-            font-size: 0.9rem;
+            font-size: 0.875rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .post-content p {
+            color: var(--text-color);
+            opacity: 0.9;
+            line-height: 1.6;
             margin-bottom: 1rem;
+        }
+
+        .center-button {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 2rem;
+            transition: var(--transition);
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         /* 技能展示区域 */
@@ -256,26 +318,6 @@
             font-size: 3rem;
             color: var(--primary-color);
             margin-bottom: 1rem;
-        }
-
-        /* 按钮样式 */
-        .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            transition: var(--transition);
-        }
-
-        .btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .center-button {
-            text-align: center;
         }
 
         /* 页脚样式 */
@@ -393,6 +435,22 @@
             padding: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+
+        /* 添加新的动画 */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+        }
     </style>
 </head>
 <body>
@@ -422,8 +480,8 @@
         <!-- 英雄区域 -->
         <section class="hero">
             <div class="hero-content">
-                <h1>欢迎来到我的博客</h1>
-                <p>分享技术见解，记录学习历程</p>
+                <h1>Diarina</h1>
+                <p>欢迎来到 Diarina</p>
             </div>
         </section>
 
