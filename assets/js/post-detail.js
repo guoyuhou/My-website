@@ -176,4 +176,8 @@ const postDetail = new PostDetail();
 function share(platform) {
     const url = encodeURIComponent(window.location.href);
     const title = encodeURIComponent(document.title);
-} 
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    postDetail.init();
+}); 

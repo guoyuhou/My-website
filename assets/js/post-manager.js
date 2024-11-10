@@ -35,7 +35,8 @@ class PostManager {
             
             const article = {
                 ...articleMeta,
-                content: markdown
+                content: markdown,
+                cover: articleMeta.cover || this.getDefaultCover()
             };
 
             // 存入缓存
@@ -74,5 +75,9 @@ class PostManager {
 
     getTags() {
         return this.metadata.tags;
+    }
+
+    getDefaultCover() {
+        return '/posts/assets/images/default-cover.jpg';
     }
 } 

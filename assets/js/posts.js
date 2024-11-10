@@ -16,34 +16,53 @@ class BlogPosts {
     }
 
     async renderPosts() {
-        let posts;
-        if (this.searchTerm) {
-            posts = await this.postManager.searchArticles(this.searchTerm);
-        } else {
-            posts = await this.postManager.getArticlesByCategory(this.currentCategory);
-        }
+        try {
+            let posts;
+            if (this.searchTerm) {
+                posts = await this.postManager.searchArticles(this.searchTerm);
+            } else {
+                posts = await this.postManager.getArticlesByCategory(this.currentCategory);
+            }
 
-        const container = document.querySelector('.posts-container');
-        const start = (this.currentPage - 1) * this.postsPerPage;
-        const paginatedPosts = posts.slice(start, start + this.postsPerPage);
-
-        container.innerHTML = paginatedPosts.map(post => `
-            <article class="post-card fade-in">
-                <a href="/posts/detail.html?id=${post.id}">
-                    <img src="${post.cover}" alt="${post.title}">
-                    <div class="post-content">
-                        <h3>${post.title}</h3>
-                        <p class="date">${post.date}</p>
-                        <p>${post.summary}</p>
-                        <div class="tags">
-                            ${post.tags.map(tag => 
-                                `<span class="tag">${tag}</span>`
-                            ).join('')}
-                        </div>
+            const container = document.querySelector('.posts-container');
+            if (!posts.length) {
+                container.innerHTML = `
+                    <div class="no-posts">
+                        <p>暂无文章</p>
                     </div>
-                </a>
-            </article>
-        `).join('');
+                `;
+                return;
+            }
+
+            const start = (this.currentPage - 1) * this.postsPerPage;
+            const paginatedPosts = posts.slice(start, start + this.postsPerPage);
+
+            container.innerHTML = paginatedPosts.map(post => `
+                <article class="post-card fade-in">
+                    <a href="/posts/detail.html?id=${post.id}">
+                        <img src="${post.cover}" alt="${post.title}">
+                        <div class="post-content">
+                            <h3>${post.title}</h3>
+                            <p class="date">${post.date}</p>
+                            <p>${post.summary}</p>
+                            <div class="tags">
+                                ${post.tags.map(tag => 
+                                    `<span class="tag">${tag}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            `).join('');
+        } catch (error) {
+            console.error('Failed to render posts:', error);
+            const container = document.querySelector('.posts-container');
+            container.innerHTML = `
+                <div class="error-message">
+                    <p>加载文章失败，请稍后重试</p>
+                </div>
+            `;
+        }
     }
 
     renderCategories() {
@@ -132,3 +151,7 @@ class BlogPosts {
 
 // 初始化博客文章
 const blogPosts = new BlogPosts(); 
+
+document.addEventListener('DOMContentLoaded', () => {
+    blogPosts.init();
+});

@@ -107,4 +107,28 @@
     .page-header h1 {
         font-size: 2rem;
     }
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading::after {
+    content: "加载中...";
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--error-color);
+}
+
+.no-posts {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color);
+    opacity: 0.7;
 } 
