@@ -315,6 +315,7 @@
             constructor() {
                 this.postManager = new PostManager();
                 this.postId = new URLSearchParams(window.location.search).get('id');
+                console.log('Post ID:', this.postId); // 调试日志
             }
 
             async init() {
@@ -328,18 +329,40 @@
             }
 
             async loadPost() {
-                const post = this.postManager.getPostById(this.postId);
-                if (!post) throw new Error('Post not found');
+                try {
+                    const post = this.postManager.getPostById(this.postId);
+                    console.log('Found post:', post);
 
-                document.title = `${post.title} - Diarina`;
-                document.querySelector('.post-title').textContent = post.title;
-                document.querySelector('.date').innerHTML = 
-                    `<i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}`;
-                document.querySelector('.category').innerHTML = 
-                    `<i class="fas fa-folder"></i> ${post.category}`;
+                    if (!post) {
+                        throw new Error('Post not found');
+                    }
 
-                const content = await this.postManager.getPostContent(post);
-                document.querySelector('.post-content').innerHTML = marked.parse(content);
+                    // 更新页面标题和元数据
+                    document.title = `${post.title} - Diarina`;
+                    document.querySelector('.post-title').textContent = post.title;
+                    document.querySelector('.date').innerHTML = 
+                        `<i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}`;
+                    document.querySelector('.category').innerHTML = 
+                        `<i class="fas fa-folder"></i> ${post.category}`;
+
+                    // 加载并渲染文章内容
+                    const content = await this.postManager.getPostContent(post);
+                    
+                    // 使用 marked 渲染 Markdown
+                    const parsedContent = marked.parse(content, {
+                        gfm: true, // 启用 GitHub 风格的 Markdown
+                        breaks: true, // 启用换行符
+                        highlight: function(code, lang) {
+                            // 如果需要代码高亮，可以在这里添加
+                            return code;
+                        }
+                    });
+                    
+                    document.querySelector('.post-content').innerHTML = parsedContent;
+                } catch (error) {
+                    console.error('Error in loadPost:', error);
+                    this.handleError();
+                }
             }
 
             handleError() {

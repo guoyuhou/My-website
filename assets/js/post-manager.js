@@ -111,17 +111,60 @@ class PostManager {
 
     async getPostContent(post) {
         try {
-            // 构建完整的文章路径
-            const contentPath = `/posts/content/${post.path}`;
+            if (!post || !post.path) {
+                throw new Error('Invalid post data');
+            }
+            
+            // 修改路径构建方式，确保以 / 开头
+            const contentPath = post.path.startsWith('/') 
+                ? post.path 
+                : `/posts/content/${post.path}`;
+                
+            console.log('Loading post from:', contentPath);
+            
             const response = await fetch(contentPath);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.text();
+            
+            const content = await response.text();
+            
+            // 提取 Markdown 文件的元数据和内容
+            const { content: markdownContent } = this.parseMarkdown(content);
+            return markdownContent;
         } catch (error) {
             console.error('Error loading post content:', error);
             throw error;
         }
+    }
+
+    // 添加 Markdown 解析方法
+    parseMarkdown(content) {
+        const lines = content.split('\n');
+        let inFrontMatter = false;
+        let markdown = [];
+        let metadata = {};
+
+        for (let line of lines) {
+            if (line.trim() === '---') {
+                inFrontMatter = !inFrontMatter;
+                continue;
+            }
+
+            if (inFrontMatter) {
+                const [key, ...values] = line.split(':');
+                if (key && values.length) {
+                    metadata[key.trim()] = values.join(':').trim();
+                }
+            } else {
+                markdown.push(line);
+            }
+        }
+
+        return {
+            metadata,
+            content: markdown.join('\n')
+        };
     }
 
     formatDate(date) {

@@ -2,13 +2,14 @@
 class ThemeManager {
     constructor() {
         this.themeToggle = document.querySelector('.theme-toggle');
+        if (!this.themeToggle) return;
         this.prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
         this.currentTheme = localStorage.getItem('theme');
         this.init();
     }
 
     init() {
-        // 初始化主题
+        if (!this.themeToggle) return;
         if (this.currentTheme) {
             document.body.setAttribute('data-theme', this.currentTheme);
             this.updateThemeIcon(this.currentTheme === 'dark');
@@ -17,9 +18,7 @@ class ThemeManager {
             this.updateThemeIcon(true);
         }
 
-        // 添加事件监听器
         this.themeToggle.addEventListener('click', () => this.toggleTheme());
-        this.prefersDarkScheme.addEventListener('change', (e) => this.handleSystemThemeChange(e));
     }
 
     toggleTheme() {
@@ -31,8 +30,11 @@ class ThemeManager {
     }
 
     updateThemeIcon(isDark) {
+        if (!this.themeToggle) return;
         const icon = this.themeToggle.querySelector('i');
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        if (icon) {
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
     }
 
     handleSystemThemeChange(e) {
