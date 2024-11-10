@@ -1,0 +1,27 @@
+{
+    "articles": [
+        {
+            "id": "2024-03-15-modern-blog-development",
+            "title": "现代化博客开发指南",
+            "date": "2024-03-15",
+            "category": "技术",
+            "tags": ["Web开发", "JavaScript", "博客"],
+            "summary": "探讨如何使用现代Web技术构建个人博客系统...",
+            "path": "2024/03/modern-blog-development.md",
+            "cover": "/assets/images/blog-cover-1.jpg",
+            "author": "Diarina",
+            "readingTime": "5 分钟"
+        }
+    ],
+    "categories": [
+        "技术",
+        "经验分享",
+        "教程"
+    ],
+    "tags": [
+        "Web开发",
+        "JavaScript",
+        "博客",
+        "前端"
+    ]
+} 

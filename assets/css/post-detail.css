@@ -1,0 +1,140 @@
+/* 文章详情页面布局 */
+.post-detail {
+    max-width: 1400px;
+    margin: 6rem auto 2rem;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr minmax(200px, 300px);
+    gap: 2rem;
+}
+
+/* 文章内容样式 */
+.article-content {
+    background: var(--bg-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--card-bg);
+}
+
+.article-meta {
+    display: flex;
+    gap: 1.5rem;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.article-meta i {
+    margin-right: 0.5rem;
+}
+
+.article-header h1 {
+    font-size: 2.5rem;
+    margin: 1rem 0;
+    color: var(--text-color);
+}
+
+/* Markdown 内容样式 */
+.article-body {
+    line-height: 1.8;
+    color: var(--text-color);
+}
+
+.article-body h2 {
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.article-body p {
+    margin: 1rem 0;
+}
+
+.article-body img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.article-body pre {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+/* 目录导航样式 */
+.table-of-contents {
+    position: sticky;
+    top: 6rem;
+    height: fit-content;
+    background: var(--bg-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.toc-container h3 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+#toc ul {
+    list-style: none;
+    padding-left: 1rem;
+}
+
+#toc a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+#toc a:hover {
+    color: var(--primary-color);
+}
+
+/* 文章导航 */
+.post-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+    grid-column: 1 / -1;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .post-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .table-of-contents {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .post-detail {
+        margin-top: 4rem;
+        padding: 0 1rem;
+    }
+
+    .article-header h1 {
+        font-size: 2rem;
+    }
+
+    .article-meta {
+        flex-wrap: wrap;
+    }
+} 

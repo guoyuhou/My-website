@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客文章 - Diarina</title>
+    <meta name="description" content="Diarina的技术博客文章列表">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/posts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏与主页相同 -->
+    <nav class="navbar">
+        <!-- ... 导航栏内容 ... -->
+    </nav>
+
+    <main class="posts-page">
+        <header class="page-header">
+            <h1>博客文章</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="搜索文章...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="categories">
+                <button class="category-btn active" data-category="all">全部</button>
+                <button class="category-btn" data-category="tech">技术</button>
+                <button class="category-btn" data-category="experience">经验分享</button>
+                <button class="category-btn" data-category="tutorial">教程</button>
+            </div>
+        </header>
+
+        <div class="posts-container">
+            <!-- 文章将通过 JavaScript 动态加载 -->
+        </div>
+
+        <div class="pagination">
+            <!-- 分页控件将通过 JavaScript 动态生成 -->
+        </div>
+    </main>
+
+    <footer>
+        <!-- ... 页脚内容 ... -->
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/posts.js"></script>
+</body>
+</html> 

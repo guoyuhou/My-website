@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${文章标题} - Diarina</title>
+    <meta name="description" content="${文章摘要}">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/post-detail.css">
+    <!-- 添加 Markdown 样式和代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <!-- ... 导航栏内容 ... -->
+    </nav>
+
+    <main class="post-detail">
+        <article class="article-content">
+            <header class="article-header">
+                <div class="article-meta">
+                    <span class="category"><i class="fas fa-folder"></i> ${分类}</span>
+                    <span class="date"><i class="fas fa-calendar"></i> ${发布日期}</span>
+                    <span class="reading-time"><i class="fas fa-clock"></i> ${阅读时间}</span>
+                </div>
+                <h1>${文章标题}</h1>
+                <div class="tags">
+                    <!-- 文章标签将动态插入 -->
+                </div>
+            </header>
+
+            <div class="article-body">
+                <!-- Markdown 内容将被渲染到这里 -->
+            </div>
+
+            <footer class="article-footer">
+                <div class="share-buttons">
+                    <button onclick="share('twitter')">
+                        <i class="fab fa-twitter"></i> 分享到 Twitter
+                    </button>
+                    <button onclick="share('weibo')">
+                        <i class="fab fa-weibo"></i> 分享到微博
+                    </button>
+                </div>
+            </footer>
+        </article>
+
+        <aside class="table-of-contents">
+            <div class="toc-container">
+                <h3>目录</h3>
+                <nav id="toc">
+                    <!-- 目录将动态生成 -->
+                </nav>
+            </div>
+        </aside>
+
+        <section class="article-comments">
+            <h3>评论</h3>
+            <div id="comments">
+                <!-- 评论系统将在这里加载 -->
+            </div>
+        </section>
+
+        <nav class="post-navigation">
+            <div class="prev-post">
+                <!-- 上一篇文章链接 -->
+            </div>
+            <div class="next-post">
+                <!-- 下一篇文章链接 -->
+            </div>
+        </nav>
+    </main>
+
+    <footer>
+        <!-- ... 页脚内容 ... -->
+    </footer>
+
+    <!-- 脚本引入 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/components/prism-javascript.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/post-detail.js"></script>
+</body>
+</html> 
