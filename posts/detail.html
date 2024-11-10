@@ -279,6 +279,10 @@
         class PostManager {
             constructor() {
                 this.posts = [];
+                // 添加调试信息
+                console.log('Document location:', document.location.href);
+                console.log('Window location:', window.location.href);
+                
                 const currentPath = window.location.pathname;
                 this.basePath = currentPath.startsWith('/posts/') ? '/posts/content' : '/content';
                 this.postsPath = `${this.basePath}/metadata.json`;
@@ -314,23 +318,32 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 添加调试信息
-                    console.log('Checking post data:', post);
-                    console.log('Base path:', this.basePath);
+                    // 尝试不同的路径组合
+                    const possiblePaths = [
+                        `${this.basePath}/${post.path}`,
+                        `${this.basePath}/posts/${post.path}`,
+                        `/posts/${post.path}`,
+                        `/content/${post.path}`
+                    ];
                     
-                    const contentPath = `${this.basePath}/${post.path}`;
-                    console.log('Attempting to load from:', contentPath);
+                    console.log('Trying these paths:', possiblePaths);
                     
-                    const response = await fetch(contentPath);
-                    if (!response.ok) {
-                        console.error(`Failed to load post from ${contentPath}`);
-                        // 添加更详细的错误信息
-                        console.error(`File system path should be: /posts/content/${post.path}`);
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                    // 尝试所有可能的路径
+                    for (const path of possiblePaths) {
+                        try {
+                            console.log('Attempting path:', path);
+                            const response = await fetch(path);
+                            if (response.ok) {
+                                const content = await response.text();
+                                console.log('Successfully loaded from:', path);
+                                return content;
+                            }
+                        } catch (e) {
+                            console.log('Failed with path:', path);
+                        }
                     }
                     
-                    const content = await response.text();
-                    return content;
+                    throw new Error('Could not load post content from any path');
                 } catch (error) {
                     console.error('Error loading post content:', error);
                     throw error;
