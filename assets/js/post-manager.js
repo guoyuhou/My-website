@@ -54,12 +54,9 @@ class PostManager {
     }
 
     generatePostUrl(post) {
-        // 根据文章标题生成 URL 友好的字符串
-        const slug = post.title
-            .toLowerCase()
-            .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-        return `/posts/detail.html?id=${post.id}`;
+        // 使用文章的路径来生成URL
+        const basePath = '/posts/content/';
+        return `${basePath}${post.path}`; // 直接使用文章的markdown文件路径
     }
 
     getAllPosts() {

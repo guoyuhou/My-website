@@ -116,7 +116,7 @@
 
 ```bash
 git clone https://github.com/yourusername/diarina.com.git
-cd diarina.com
+cd diarina.com  
 ```
 
 2. 安装依赖（如果需要）

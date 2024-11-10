@@ -76,7 +76,7 @@ class HomePage {
                     </div>
                     <h3>${post.title}</h3>
                     <p>${post.description}</p>
-                    <a href="${post.url}" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
+                    <a href="/posts/detail.html?id=${post.id}" class="read-more">阅读更多 <i class="fas fa-arrow-right"></i></a>
                 </div>
             </article>
         `;
