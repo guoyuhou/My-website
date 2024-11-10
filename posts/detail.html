@@ -279,9 +279,8 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                // 获取当前域名的根路径
-                this.baseUrl = window.location.origin;
-                this.postsPath = `${this.baseUrl}/posts/content/metadata.json`;
+                // 使用相对路径
+                this.postsPath = '../content/metadata.json';
             }
 
             async init() {
@@ -308,8 +307,8 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    // 使用完整的 URL 路径
-                    const contentPath = `${this.baseUrl}/posts/content/${post.path}`;
+                    // 使用相对路径
+                    const contentPath = `../content/${post.path}`;
                     console.log('Loading post from:', contentPath);
                     
                     const response = await fetch(contentPath);
