@@ -1,0 +1,22 @@
+title: Diarina
+description: 技术博客与个人空间
+baseurl: ""
+url: "https://diarina.com"
+
+# 启用 markdown
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# 文章永久链接格式
+permalink: /posts/:year/:title.html
+
+# 默认布局设置
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post" 
