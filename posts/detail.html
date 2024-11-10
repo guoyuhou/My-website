@@ -232,7 +232,7 @@
     <footer>
         <div class="footer-content">
             <div class="social-links">
-                <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://github.com/guoyuhou" target="_blank"><i class="fab fa-github"></i></a>
             </div>
             <p>&copy; 2024 Diarina. All rights reserved.</p>
         </div>
@@ -279,16 +279,17 @@
         class PostManager {
             constructor() {
                 this.posts = [];
-                this.postsPath = '../content/metadata.json';
+                this.postsPath = './content/metadata.json';
             }
 
             async init() {
                 try {
+                    console.log('Attempting to load metadata from:', this.postsPath);
                     const response = await fetch(this.postsPath);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     this.posts = data.articles;
-                    console.log('Loaded posts:', this.posts);
+                    console.log('Successfully loaded posts:', this.posts);
                 } catch (error) {
                     console.error('Failed to load posts:', error);
                     throw error;
@@ -305,7 +306,7 @@
                         throw new Error('Invalid post data');
                     }
                     
-                    const contentPath = `../content/${post.path}`;
+                    const contentPath = `./content/${post.path}`;
                     console.log('Loading post from:', contentPath);
                     
                     const response = await fetch(contentPath);
@@ -315,7 +316,6 @@
                     }
                     
                     const content = await response.text();
-                    console.log('Post content loaded successfully');
                     return content;
                 } catch (error) {
                     console.error('Error loading post content:', error);
