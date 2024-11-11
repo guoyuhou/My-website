@@ -1,6 +1,16 @@
 {
     "articles": [
         {
+            "id": "2024-11-Hello-Winter",
+            "title": "Hello Winter",
+            "date": "2024-11-11",
+            "category": "技术",
+            "tags": ["Web开发"],
+            "summary": "在这里填写文章摘要...",
+            "path": "2024/11/Hello-Winter.md",
+            "cover": "/assets/images/default-cover.jpg"
+        },
+        {
             "id": "2024-03-hello-world",
             "title": "Hello World - 博客开篇",
             "date": "2024-03-15",
