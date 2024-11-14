@@ -552,6 +552,7 @@
         </div>
     </footer>
 
+    <script src="/assets/js/post-manager.js"></script>
     <script>
         // 主题切换
         document.addEventListener('DOMContentLoaded', function() {
@@ -621,32 +622,44 @@
 
         // 修改最新文章数据的渲染部分
         document.addEventListener('DOMContentLoaded', async function() {
-            // 初始化 PostManager
-            const postManager = new PostManager();
-            await postManager.init();
-            
-            // 获取最新文章
-            const recentPosts = postManager.getRecentPosts(3); // 获取最新的3篇文章
-            
-            // 渲染最新文章
-            const postsGrid = document.querySelector('.posts-grid');
-            if (postsGrid) {
-                postsGrid.innerHTML = recentPosts.map(post => `
-                    <article class="post-card">
-                        <img src="${post.cover || '../assets/images/default-cover.jpg'}" 
-                             alt="${post.title}" 
-                             loading="lazy">
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <span><i class="fas fa-folder"></i> ${post.category}</span>
-                                <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString('zh-CN')}</span>
+            try {
+                // 初始化 PostManager
+                const postManager = new PostManager();
+                await postManager.init();
+                
+                // 获取最新文章
+                const recentPosts = postManager.getRecentPosts(3); // 获取最新的3篇文章
+                
+                // 渲染最新文章
+                const postsGrid = document.querySelector('.posts-grid');
+                if (postsGrid) {
+                    postsGrid.innerHTML = recentPosts.map(post => `
+                        <article class="post-card">
+                            <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
+                                 alt="${post.title}" 
+                                 loading="lazy">
+                            <div class="post-content">
+                                <div class="post-meta">
+                                    <span><i class="fas fa-folder"></i> ${post.category}</span>
+                                    <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString('zh-CN')}</span>
+                                </div>
+                                <h3>${post.title}</h3>
+                                <p>${post.summary}</p>
+                                <a href="/posts/detail.html?id=${post.id}" class="btn">阅读更多</a>
                             </div>
-                            <h3>${post.title}</h3>
-                            <p>${post.summary}</p>
-                            <a href="/posts/detail.html?id=${post.id}" class="btn">阅读更多</a>
+                        </article>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading recent posts:', error);
+                const postsGrid = document.querySelector('.posts-grid');
+                if (postsGrid) {
+                    postsGrid.innerHTML = `
+                        <div class="error-message">
+                            <p>加载最新文章失败，请稍后重试</p>
                         </div>
-                    </article>
-                `).join('');
+                    `;
+                }
             }
         });
 
