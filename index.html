@@ -732,6 +732,63 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* 技能专长标题样式 */
+        .section-title-container {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 1rem auto 0;
+            line-height: 1.6;
+        }
+
+        /* 暗色主题适配 */
+        [data-theme="dark"] .section-title {
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .section-subtitle {
+            color: var(--text-secondary);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -802,7 +859,10 @@
 
         <!-- 最新文章区域 -->
         <section class="recent-posts">
-            <h2 class="section-title">最新文章</h2>
+            <div class="section-title-container">
+                <h2 class="section-title">最新文章</h2>
+                <p class="section-subtitle">分享技术见解与开发经验</p>
+            </div>
             <div class="posts-grid">
                 <!-- 文章将通过 JavaScript 动态加载 -->
             </div>
@@ -815,7 +875,10 @@
 
         <!-- 技能展示区域 -->
         <section class="skills">
-            <h2>技能专长</h2>
+            <div class="section-title-container">
+                <h2 class="section-title">技能专长</h2>
+                <p class="section-subtitle">专注于全栈开发与人工智能应用，不断探索技术的边界</p>
+            </div>
             <div class="skills-grid">
                 <div class="skill-card">
                     <i class="fa-brands fa-js"></i>
@@ -948,46 +1011,45 @@
             }
         ];
 
-        // 修改最新文章数据的渲染部分
+        // 最新文章处理
         document.addEventListener('DOMContentLoaded', async function() {
             try {
+                // 获取最新文章容器
+                const postsGrid = document.querySelector('.posts-grid');
+                if (!postsGrid) return;
+
+                // 初始化 PostManager
                 const postManager = new PostManager();
                 await postManager.init();
                 
+                // 获取最新的3篇文章
                 const recentPosts = postManager.getRecentPosts(3);
-                const postsGrid = document.querySelector('.posts-grid');
                 
-                if (postsGrid) {
-                    postsGrid.innerHTML = '';
-                    
-                    recentPosts.forEach(post => {
-                        const articleElement = document.createElement('article');
-                        articleElement.className = 'post-card';
-                        articleElement.innerHTML = `
-                            <div class="post-image-container">
-                                <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
-                                     alt="${post.title}"
-                                     loading="lazy"
-                                     onerror="this.src='/assets/images/default-cover.jpg'"
-                                     class="post-image">
+                // 渲染文章
+                postsGrid.innerHTML = recentPosts.map(post => `
+                    <article class="post-card">
+                        <div class="post-image-container">
+                            <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
+                                 alt="${post.title}" 
+                                 class="post-image"
+                                 loading="lazy"
+                                 onerror="this.src='/assets/images/default-cover.jpg'">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <span><i class="fas fa-folder"></i> ${post.category}</span>
+                                <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString('zh-CN')}</span>
                             </div>
-                            <div class="post-content">
-                                <div class="post-meta">
-                                    <span><i class="fas fa-folder"></i> ${post.category}</span>
-                                    <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString('zh-CN')}</span>
-                                </div>
-                                <h3>${post.title}</h3>
-                                <p>${post.summary}</p>
-                                <a href="/posts/detail.html?id=${post.id}" class="btn">
-                                    阅读更多 <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
-                        `;
-                        postsGrid.appendChild(articleElement);
-                    });
-                }
+                            <h3>${post.title}</h3>
+                            <p>${post.summary}</p>
+                            <a href="/posts/detail.html?id=${post.id}" class="btn">阅读更多</a>
+                        </div>
+                    </article>
+                `).join('');
+
             } catch (error) {
                 console.error('Error loading recent posts:', error);
+                const postsGrid = document.querySelector('.posts-grid');
                 if (postsGrid) {
                     postsGrid.innerHTML = `
                         <div class="error-message">
