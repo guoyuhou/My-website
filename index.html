@@ -127,11 +127,39 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: linear-gradient(
-                135deg,
-                var(--background-start),
-                var(--background-end)
-            );
+            background: linear-gradient(135deg, var(--background-start), var(--background-end));
+            padding: 0 5%;
+        }
+
+        .hero-content {
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .hero-left {
+            text-align: left;
+        }
+
+        .title-container h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            /* 移除闪烁效果，改用渐变 */
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientFlow 8s ease infinite;
+        }
+
+        .hero-right {
+            position: relative;
         }
 
         /* 背景动画效果 */
@@ -230,9 +258,9 @@
 
         /* 统计卡片 */
         .hero-description {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
             margin: 3rem 0;
         }
 
@@ -425,6 +453,87 @@
             0% { transform: translateX(-50%) translateY(0); opacity: 1; }
             100% { transform: translateX(-50%) translateY(15px); opacity: 0; }
         }
+
+        /* 文章卡片动画 */
+        .post-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 技能卡片动画 */
+        .skill-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .skill-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 进度条动画 */
+        .skill-progress {
+            width: 0;
+            transition: width 1.5s ease-in-out;
+        }
+
+        .skill-card.animate .skill-progress {
+            width: var(--progress);
+        }
+
+        /* 文章展示区域 */
+        .recent-posts {
+            padding: 5rem 0;
+            background: var(--bg-color);
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+        }
+
+        /* 居中查看更多按钮 */
+        .center-button {
+            text-align: center;
+            margin-top: 3rem;
+            padding-bottom: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -522,7 +631,7 @@
 
         <!-- 最新文章区域 -->
         <section class="recent-posts">
-            <h2>最新文章</h2>
+            <h2 class="section-title">最新文章</h2>
             <div class="posts-grid">
                 <!-- 文章将通过 JavaScript 动态加载 -->
             </div>
@@ -649,7 +758,7 @@
             {
                 icon: 'fa-solid fa-database',
                 name: '数据库与缓存',
-                description: '精通MySQL数据库设计与��化，熟练使用Redis缓存系统和Celery任务队列'
+                description: '精通MySQL数据库设计与优化，熟练使用Redis缓存系统和Celery任务队列'
             },
             {
                 icon: 'fa-solid fa-cloud',
@@ -718,24 +827,50 @@
             }
         });
 
-        // 添加滚动动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
+        // 滚动动画
         document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.post-card, .skill-card');
-            elements.forEach(el => observer.observe(el));
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                        
+                        // 如果是技能卡片，触发进度条动画
+                        if (entry.target.classList.contains('skill-card')) {
+                            const progress = entry.target.querySelector('.skill-progress');
+                            if (progress) {
+                                progress.style.width = progress.getAttribute('data-progress') + '%';
+                            }
+                        }
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // 观察文章卡片
+            document.querySelectorAll('.post-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // 观察技能卡片
+            document.querySelectorAll('.skill-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // 文章卡片的交错动画
+        document.querySelectorAll('.post-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        // 技能卡片的交错动画
+        document.querySelectorAll('.skill-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
         });
 
         document.addEventListener('DOMContentLoaded', function() {
