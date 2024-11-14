@@ -569,13 +569,7 @@
         /* 文章展示区域 */
         .recent-posts {
             padding: 4rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 3rem;
-            color: var(--text-primary);
+            background: var(--bg-color);
         }
 
         .posts-grid {
@@ -588,6 +582,8 @@
         }
 
         .post-card {
+            display: flex;
+            flex-direction: column;
             background: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
@@ -595,12 +591,9 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
         .post-image-container {
+            position: relative;
+            width: 100%;
             height: 200px;
             overflow: hidden;
         }
@@ -612,12 +605,23 @@
             transition: transform 0.3s ease;
         }
 
-        .post-card:hover .post-image {
-            transform: scale(1.05);
-        }
-
         .post-content {
             padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-content h3 {
+            margin: 0.5rem 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .post-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            flex: 1;
         }
 
         .post-meta {
@@ -625,13 +629,22 @@
             gap: 1rem;
             font-size: 0.9rem;
             color: var(--text-secondary);
-            margin-bottom: 1rem;
         }
 
-        .post-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.6rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         /* 居中查看更多按钮 */
@@ -789,7 +802,20 @@
                 padding: 0 1rem;
             }
         }
+
+        /* 加载状态和错误消息样式 */
+        .loading, .error-message, .no-posts {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            color: #ef4444;
+        }
     </style>
+    <script src="/assets/js/post-manager.js"></script>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -977,54 +1003,52 @@
             document.querySelector('.nav-links').classList.toggle('active');
         });
 
-        // 修改技能卡片数据
-        const skills = [
-            {
-                icon: 'fa-brands fa-js',
-                name: '前端开发',
-                description: '精通现代前端技术栈，包括JavaScript/TypeScript、Vue3生态系统、Vite构建工具等'
-            },
-            {
-                icon: 'fa-brands fa-python',
-                name: 'Python全栈',
-                description: '熟练使用Django及REST框架进行后端开发，掌握数据分析和网络爬虫技术'
-            },
-            {
-                icon: 'fa-solid fa-database',
-                name: '数据库与缓存',
-                description: '精通MySQL数据库设计与优化，熟练使用Redis缓存系统和Celery任务队列'
-            },
-            {
-                icon: 'fa-solid fa-cloud',
-                name: 'DevOps',
-                description: '熟练配置云服务器，掌握Docker容器化部署，具备完整项目部署运维经验'
-            },
-            {
-                icon: 'fa-solid fa-robot',
-                name: 'AIGC开发',
-                description: '具备AI应用开发经验，包括PPT智能转换、文档生成等，了解模型微调技术'
-            },
-            {
-                icon: 'fa-brands fa-css3',
-                name: 'UI/UX开发',
-                description: '精通CSS和现代前端样式开发，能够现响应式设计和优秀的用户体验'
+        // 文章管理类
+        class PostManager {
+            constructor() {
+                this.posts = [];
             }
-        ];
 
-        // 最新文章处理
+            async init() {
+                try {
+                    const response = await fetch('/posts/content/metadata.json');
+                    if (!response.ok) throw new Error('Failed to fetch posts metadata');
+                    this.posts = await response.json();
+                    // 按日期排序
+                    this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                } catch (error) {
+                    console.error('Error initializing PostManager:', error);
+                    this.posts = [];
+                }
+            }
+
+            getRecentPosts(count = 3) {
+                return this.posts.slice(0, count);
+            }
+        }
+
+        // 文章加载和渲染
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                // 获取最新文章容器
                 const postsGrid = document.querySelector('.posts-grid');
-                if (!postsGrid) return;
+                if (!postsGrid) {
+                    console.error('Posts grid container not found');
+                    return;
+                }
 
-                // 初始化 PostManager
+                // 显示加载状态
+                postsGrid.innerHTML = '<div class="loading">加载中...</div>';
+
                 const postManager = new PostManager();
                 await postManager.init();
                 
-                // 获取最新的3篇文章
                 const recentPosts = postManager.getRecentPosts(3);
                 
+                if (recentPosts.length === 0) {
+                    postsGrid.innerHTML = '<div class="no-posts">暂无文章</div>';
+                    return;
+                }
+
                 // 渲染文章
                 postsGrid.innerHTML = recentPosts.map(post => `
                     <article class="post-card">
