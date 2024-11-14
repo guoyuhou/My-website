@@ -1,42 +1,53 @@
-class ThemeManager {
-    constructor() {
-        this.themeToggle = document.querySelector('.theme-toggle');
-        this.init();
-    }
+// 使用立即执行函数创建单例
+const ThemeManager = (function() {
+    let instance;
 
-    init() {
-        // 获取保存的主题
-        const savedTheme = localStorage.getItem('theme');
-        
-        // 设置初始主题
-        if (savedTheme) {
-            document.body.setAttribute('data-theme', savedTheme);
-            this.updateThemeIcon(savedTheme === 'dark');
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.setAttribute('data-theme', 'dark');
-            this.updateThemeIcon(true);
+    class ThemeManagerClass {
+        constructor() {
+            if (instance) {
+                return instance;
+            }
+            
+            this.themeToggle = document.querySelector('.theme-toggle');
+            if (!this.themeToggle) return;
+            this.prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            this.currentTheme = localStorage.getItem('theme');
+            instance = this;
+            this.init();
         }
 
-        // 添加切换事件
-        this.themeToggle.addEventListener('click', () => this.toggleTheme());
+        init() {
+            if (!this.themeToggle) return;
+            if (this.currentTheme) {
+                document.body.setAttribute('data-theme', this.currentTheme);
+                this.updateThemeIcon(this.currentTheme === 'dark');
+            } else if (this.prefersDarkScheme.matches) {
+                document.body.setAttribute('data-theme', 'dark');
+                this.updateThemeIcon(true);
+            }
+
+            this.themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+
+        toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            this.updateThemeIcon(!isDark);
+        }
+
+        updateThemeIcon(isDark) {
+            if (!this.themeToggle) return;
+            const icon = this.themeToggle.querySelector('i');
+            if (icon) {
+                icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
     }
 
-    toggleTheme() {
-        const isDark = document.body.getAttribute('data-theme') === 'dark';
-        const newTheme = isDark ? 'light' : 'dark';
-        
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        this.updateThemeIcon(!isDark);
-    }
+    return new ThemeManagerClass();
+})();
 
-    updateThemeIcon(isDark) {
-        const icon = this.themeToggle.querySelector('i');
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-    }
-}
-
-// 初始化主题管理器
-document.addEventListener('DOMContentLoaded', () => {
-    new ThemeManager();
-}); 
+// 导出为全局变量
+window.themeManager = ThemeManager; 
