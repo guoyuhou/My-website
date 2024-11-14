@@ -1,21 +1,26 @@
 class BlogPosts {
     constructor() {
-        this.postManager = new PostManager();
         this.currentPage = 1;
         this.postsPerPage = 9;
         this.currentCategory = 'all';
         this.searchTerm = '';
-        this.posts = [];
     }
 
     async init() {
         try {
-            await this.postManager.init();
-            this.posts = await this.postManager.getAllPosts();
-            this.setupEventListeners();
-            await this.renderPosts();
-            this.renderCategories();
-            this.setupIntersectionObserver();
+            await window.postManager.init();
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    this.setupEventListeners();
+                    this.renderPosts();
+                    this.renderCategories();
+                });
+            } else {
+                this.setupEventListeners();
+                this.renderPosts();
+                this.renderCategories();
+            }
         } catch (error) {
             console.error('Failed to initialize blog posts:', error);
             this.handleError();
@@ -23,77 +28,60 @@ class BlogPosts {
     }
 
     setupEventListeners() {
-        // 搜索功能
         const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('input', this.debounce(() => {
-            this.searchTerm = searchInput.value;
-            this.currentPage = 1;
-            this.renderPosts();
-        }, 300));
-
-        // 分类切换
-        document.querySelector('.categories').addEventListener('click', (e) => {
-            if (e.target.classList.contains('category-tag')) {
-                document.querySelectorAll('.category-tag').forEach(tag => {
-                    tag.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                this.currentCategory = e.target.dataset.category;
+        if (searchInput) {
+            searchInput.addEventListener('input', this.debounce(() => {
+                this.searchTerm = searchInput.value;
                 this.currentPage = 1;
                 this.renderPosts();
-            }
-        });
-    }
+            }, 300));
+        }
 
-    setupIntersectionObserver() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+        const categoriesContainer = document.querySelector('.categories');
+        if (categoriesContainer) {
+            categoriesContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-tag')) {
+                    document.querySelectorAll('.category-tag').forEach(tag => {
+                        tag.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                    this.currentCategory = e.target.dataset.category;
+                    this.currentPage = 1;
+                    this.renderPosts();
                 }
             });
-        }, {
-            threshold: 0.1
-        });
-
-        document.querySelectorAll('.post-card').forEach(card => {
-            observer.observe(card);
-        });
-    }
-
-    async renderPosts() {
-        try {
-            const container = document.querySelector('.posts-container');
-            const filteredPosts = this.filterPosts();
-            if (!filteredPosts) {
-                throw new Error('Failed to filter posts');
-            }
-            const start = (this.currentPage - 1) * this.postsPerPage;
-            const end = start + this.postsPerPage;
-            const postsToShow = filteredPosts.slice(start, end);
-
-            container.innerHTML = postsToShow.length ? postsToShow.map(post => this.createPostCard(post)).join('') 
-                : '<div class="no-posts">没有找到相关文章</div>';
-
-            this.renderPagination(filteredPosts.length);
-            this.setupIntersectionObserver();
-        } catch (error) {
-            console.error('Error rendering posts:', error);
-            this.handleError();
         }
     }
 
+    renderPosts() {
+        const postsContainer = document.querySelector('.posts-container');
+        if (!postsContainer) return;
+
+        const filteredPosts = this.filterPosts();
+        const start = (this.currentPage - 1) * this.postsPerPage;
+        const end = start + this.postsPerPage;
+        const postsToShow = filteredPosts.slice(start, end);
+
+        postsContainer.innerHTML = postsToShow.length ? 
+            postsToShow.map(post => this.createPostCard(post)).join('') :
+            '<div class="no-posts">没有找到相关文章</div>';
+
+        this.renderPagination(filteredPosts.length);
+    }
+
     filterPosts() {
-        return this.posts.filter(post => {
-            const matchesSearch = post.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                                post.description.toLowerCase().includes(this.searchTerm.toLowerCase());
-            const matchesCategory = this.currentCategory === 'all' || post.category === this.currentCategory;
+        return window.postManager.getAllPosts().filter(post => {
+            const matchesSearch = !this.searchTerm || 
+                post.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                post.summary.toLowerCase().includes(this.searchTerm.toLowerCase());
+            const matchesCategory = this.currentCategory === 'all' || 
+                post.category === this.currentCategory;
             return matchesSearch && matchesCategory;
         });
     }
 
     renderCategories() {
-        const categories = ['all', ...new Set(this.posts.map(post => post.category))];
+        const categories = ['all', ...new Set(window.postManager.getCategories())];
         const container = document.querySelector('.categories');
         
         container.innerHTML = categories.map(category => `
@@ -144,7 +132,7 @@ class BlogPosts {
                     </div>
                     <h3>${post.title}</h3>
                     <p>${post.summary}</p>
-                    <a href="${this.postManager.generatePostUrl(post)}" class="read-more">
+                    <a href="${window.postManager.generatePostUrl(post)}" class="read-more">
                         阅读更多 <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -153,14 +141,16 @@ class BlogPosts {
     }
 
     handleError() {
-        const container = document.querySelector('.posts-container');
-        container.innerHTML = `
-            <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>加载文章失败，请稍后重试</p>
-                <button onclick="location.reload()">重新加载</button>
-            </div>
-        `;
+        const postsContainer = document.querySelector('.posts-container');
+        if (postsContainer) {
+            postsContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>加载文章失败，请稍后重试</p>
+                    <button onclick="location.reload()">重新加载</button>
+                </div>
+            `;
+        }
     }
 
     debounce(func, wait) {
@@ -176,9 +166,5 @@ class BlogPosts {
     }
 }
 
-// 初始化
-let blogPosts;
-document.addEventListener('DOMContentLoaded', () => {
-    blogPosts = new BlogPosts();
-    blogPosts.init();
-});
+const blogPosts = new BlogPosts();
+blogPosts.init();

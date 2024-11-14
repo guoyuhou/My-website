@@ -1,20 +1,44 @@
 class PostManager {
     constructor() {
         this.posts = [];
-        this.postsPath = '/posts/content/metadata.json';
-        this.categories = new Set();
+        this.initialized = false;
     }
 
     async init() {
+        if (this.initialized) return;
+        
         try {
-            await this.loadPosts();
-            this.processPosts();
+            const response = await fetch('/posts/content/metadata.json');
+            if (!response.ok) throw new Error('Failed to fetch posts metadata');
+            const data = await response.json();
+            this.posts = data.articles;
+            this.initialized = true;
         } catch (error) {
-            console.error('Failed to initialize PostManager:', error);
+            console.error('Error initializing PostManager:', error);
             throw error;
         }
     }
 
+    getAllPosts() {
+        return this.posts;
+    }
+
+    getRecentPosts(count = 3) {
+        return this.posts
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, count);
+    }
+
+    getCategories() {
+        return [...new Set(this.posts.map(post => post.category))];
+    }
+
+    getPostById(id) {
+        return this.posts.find(post => post.id === id);
+    }
+}
+
+window.postManager = new PostManager(); 
     async loadPosts() {
         try {
             const response = await fetch(this.postsPath);
