@@ -4,23 +4,15 @@ class BlogPosts {
         this.postsPerPage = 9;
         this.currentCategory = 'all';
         this.searchTerm = '';
+        this.postManager = window.postManager;
     }
 
     async init() {
         try {
-            await window.postManager.init();
-            
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    this.setupEventListeners();
-                    this.renderPosts();
-                    this.renderCategories();
-                });
-            } else {
-                this.setupEventListeners();
-                this.renderPosts();
-                this.renderCategories();
-            }
+            await this.postManager.init();
+            this.setupEventListeners();
+            this.renderPosts();
+            this.renderCategories();
         } catch (error) {
             console.error('Failed to initialize blog posts:', error);
             this.handleError();
@@ -30,24 +22,21 @@ class BlogPosts {
     setupEventListeners() {
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
-            searchInput.addEventListener('input', this.debounce(() => {
-                this.searchTerm = searchInput.value;
+            searchInput.addEventListener('input', (e) => {
+                this.searchTerm = e.target.value;
                 this.currentPage = 1;
                 this.renderPosts();
-            }, 300));
+            });
         }
 
         const categoriesContainer = document.querySelector('.categories');
         if (categoriesContainer) {
             categoriesContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('category-tag')) {
-                    document.querySelectorAll('.category-tag').forEach(tag => {
-                        tag.classList.remove('active');
-                    });
-                    e.target.classList.add('active');
                     this.currentCategory = e.target.dataset.category;
                     this.currentPage = 1;
                     this.renderPosts();
+                    this.updateCategoryUI();
                 }
             });
         }
@@ -70,7 +59,7 @@ class BlogPosts {
     }
 
     filterPosts() {
-        return window.postManager.getAllPosts().filter(post => {
+        return this.postManager.getAllPosts().filter(post => {
             const matchesSearch = !this.searchTerm || 
                 post.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                 post.summary.toLowerCase().includes(this.searchTerm.toLowerCase());
@@ -81,7 +70,7 @@ class BlogPosts {
     }
 
     renderCategories() {
-        const categories = ['all', ...new Set(window.postManager.getCategories())];
+        const categories = ['all', ...new Set(this.postManager.getCategories())];
         const container = document.querySelector('.categories');
         
         container.innerHTML = categories.map(category => `
@@ -132,7 +121,7 @@ class BlogPosts {
                     </div>
                     <h3>${post.title}</h3>
                     <p>${post.summary}</p>
-                    <a href="${window.postManager.generatePostUrl(post)}" class="read-more">
+                    <a href="${this.postManager.generatePostUrl(post)}" class="read-more">
                         阅读更多 <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -166,5 +155,9 @@ class BlogPosts {
     }
 }
 
-const blogPosts = new BlogPosts();
-blogPosts.init();
+document.addEventListener('DOMContentLoaded', () => {
+    const blogPosts = new BlogPosts();
+    blogPosts.init().catch(error => {
+        console.error('Failed to initialize blog posts:', error);
+    });
+});
