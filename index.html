@@ -405,6 +405,41 @@
             padding: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+
+        .post-card, .skill-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .post-card.animate, .skill-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .post-card img {
+            transition: transform 0.3s ease;
+        }
+
+        .post-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -550,37 +585,118 @@
             document.querySelector('.nav-links').classList.toggle('active');
         });
 
-        // 技能卡片数据
+        // 修改技能卡片数据
         const skills = [
-            { icon: 'fa-brands fa-html5', name: 'HTML5', description: '现代化的HTML5开发' },
-            { icon: 'fa-brands fa-css3-alt', name: 'CSS3', description: '响应式设计与动画' },
-            { icon: 'fa-brands fa-js', name: 'JavaScript', description: '现代JavaScript开发' },
-            { icon: 'fa-brands fa-react', name: 'React', description: '前端框架开发' }
+            {
+                icon: 'fa-brands fa-js',
+                name: '前端开发',
+                description: '精通现代前端技术栈，包括JavaScript/TypeScript、Vue3生态系统、Vite构建工具等'
+            },
+            {
+                icon: 'fa-brands fa-python',
+                name: 'Python全栈',
+                description: '熟练使用Django及REST框架进行后端开发，掌握数据分析和网络爬虫技术'
+            },
+            {
+                icon: 'fa-solid fa-database',
+                name: '数据库与缓存',
+                description: '精通MySQL数据库设计与优化，熟练使用Redis缓存系统和Celery任务队列'
+            },
+            {
+                icon: 'fa-solid fa-cloud',
+                name: 'DevOps',
+                description: '熟练配置云服务器，掌握Docker容器化部署，具备完整项目部署运维经验'
+            },
+            {
+                icon: 'fa-solid fa-robot',
+                name: 'AIGC开发',
+                description: '具备AI应用开发经验，包括PPT智能转换、文档生成等，了解模型微调技术'
+            },
+            {
+                icon: 'fa-brands fa-css3',
+                name: 'UI/UX开发',
+                description: '精通CSS和现代前端样式开发，能够实现响应式设计和优秀的用户体验'
+            }
+        ];
+
+        // 添加最新文章数据
+        const recentPosts = [
+            {
+                title: "Vue3与TypeScript实战经验分享",
+                date: "2024-03-15",
+                summary: "深入探讨Vue3组合式API与TypeScript的最佳实践",
+                image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500",
+                link: "/posts/vue3-typescript-practice"
+            },
+            {
+                title: "Django REST framework实战指南",
+                date: "2024-03-10",
+                summary: "从零开始构建可扩展的REST API服务",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500",
+                link: "/posts/django-rest-framework-guide"
+            },
+            {
+                title: "AIGC应用开发实践",
+                date: "2024-03-05",
+                summary: "探索AI在文档转换与生成中的应用",
+                image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=500",
+                link: "/posts/aigc-development"
+            }
         ];
 
         // 渲染技能卡片
         document.addEventListener('DOMContentLoaded', function() {
+            // 渲染技能卡片
             const skillsGrid = document.querySelector('.skills-grid');
-            skillsGrid.innerHTML = skills.map(skill => `
-                <div class="skill-card">
-                    <i class="${skill.icon}"></i>
-                    <h3>${skill.name}</h3>
-                    <p>${skill.description}</p>
-                </div>
-            `).join('');
+            if (skillsGrid) {
+                skillsGrid.innerHTML = '';  // 清空现有内容
+                skills.forEach(skill => {
+                    const skillCard = document.createElement('div');
+                    skillCard.className = 'skill-card';
+                    skillCard.innerHTML = `
+                        <i class="${skill.icon}"></i>
+                        <h3>${skill.name}</h3>
+                        <p>${skill.description}</p>
+                    `;
+                    skillsGrid.appendChild(skillCard);
+                });
+            }
+
+            // 渲染最新文章
+            const postsGrid = document.querySelector('.posts-grid');
+            if (postsGrid) {
+                postsGrid.innerHTML = recentPosts.map(post => `
+                    <article class="post-card">
+                        <img src="${post.image}" alt="${post.title}" loading="lazy">
+                        <div class="post-content">
+                            <h3>${post.title}</h3>
+                            <div class="date">${post.date}</div>
+                            <p>${post.summary}</p>
+                            <a href="${post.link}" class="btn">阅读更多</a>
+                        </div>
+                    </article>
+                `).join('');
+            }
         });
 
-        // 滚动动画
-        document.addEventListener('scroll', function() {
-            const cards = document.querySelectorAll('.post-card, .skill-card');
-            cards.forEach(card => {
-                const cardTop = card.getBoundingClientRect().top;
-                const windowHeight = window.innerHeight;
-                if (cardTop < windowHeight * 0.9) {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
+        // 添加滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
                 }
             });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.post-card, .skill-card');
+            elements.forEach(el => observer.observe(el));
         });
     </script>
 </body>
