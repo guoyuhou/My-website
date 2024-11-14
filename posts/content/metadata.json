@@ -1,12 +1,22 @@
 {
     "articles": [
         {
+            "id": "2024-11-目标树、搜索、AI",
+            "title": "目标树、搜索、AI",
+            "date": "2024-11-14",
+            "category": "技术",
+            "tags": ["JavaScript", "编程", "最佳实践"],
+            "summary": "MIT人工智能入门课笔记及思考。",
+            "path": "2024/11/目标树、搜索、AI.md",
+            "cover": "/assets/images/default-cover.jpg"
+        },
+        {
             "id": "2024-11-Hello-Winter",
             "title": "Hello Winter",
             "date": "2024-11-11",
             "category": "技术",
             "tags": ["Web开发"],
-            "summary": "在这里填写文章摘要...",
+            "summary": "Hello Winter!",
             "path": "2024/11/Hello-Winter.md",
             "cover": "/assets/images/default-cover.jpg"
         },
@@ -40,6 +50,7 @@
             "path": "2024/03/javascript-best-practices.md",
             "cover": "/assets/images/default-cover.jpg"
         }
+        
     ],
     "categories": [
         "技术",
