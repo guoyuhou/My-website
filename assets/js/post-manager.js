@@ -1,4 +1,4 @@
-// 使用立即执行函数避免全局污染
+// 使用立即执行函数创建单例
 const PostManager = (function() {
     let instance;
 
@@ -21,6 +21,7 @@ const PostManager = (function() {
                 const data = await response.json();
                 this.posts = data.articles;
                 this.initialized = true;
+                return this.posts;
             } catch (error) {
                 console.error('Error initializing PostManager:', error);
                 throw error;

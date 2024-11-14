@@ -1016,10 +1016,9 @@
                 // 显示加载状态
                 postsGrid.innerHTML = '<div class="loading">加载中...</div>';
 
-                const postManager = new PostManager();
-                await postManager.init();
-                
-                const recentPosts = postManager.getRecentPosts(3);
+                // 使用全局 postManager 实例
+                await window.postManager.init();
+                const recentPosts = window.postManager.getRecentPosts(3);
                 
                 if (recentPosts.length === 0) {
                     postsGrid.innerHTML = '<div class="no-posts">暂无文章</div>';
