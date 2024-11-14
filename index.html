@@ -191,6 +191,7 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
+            opacity: 1;
         }
 
         .post-card {
@@ -199,7 +200,6 @@
             overflow: hidden;
             transition: var(--transition);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: fadeIn 0.5s ease;
         }
 
         .post-card:hover {
@@ -407,38 +407,14 @@
         }
 
         .post-card, .skill-card {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-
-        .post-card.animate, .skill-card.animate {
             opacity: 1;
             transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .post-card img {
-            transition: transform 0.3s ease;
-        }
-
-        .post-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            margin-top: 1rem;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
         }
 
         .post-image-container {
@@ -453,6 +429,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: 1;
             transition: transform 0.3s ease;
         }
 
@@ -680,25 +657,25 @@
         // 修改最新文章数据的渲染部分
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                // 初始化 PostManager
                 const postManager = new PostManager();
                 await postManager.init();
                 
-                // 获取最新文章
-                const recentPosts = postManager.getRecentPosts(3); // 获取最新的3篇文章
-                
-                // 渲染最新文章
+                const recentPosts = postManager.getRecentPosts(3);
                 const postsGrid = document.querySelector('.posts-grid');
+                
                 if (postsGrid) {
-                    postsGrid.innerHTML = recentPosts.map(post => `
-                        <article class="post-card">
+                    postsGrid.innerHTML = '';
+                    
+                    recentPosts.forEach(post => {
+                        const articleElement = document.createElement('article');
+                        articleElement.className = 'post-card';
+                        articleElement.innerHTML = `
                             <div class="post-image-container">
                                 <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
                                      alt="${post.title}"
                                      loading="lazy"
                                      onerror="this.src='/assets/images/default-cover.jpg'"
                                      class="post-image">
-                                <div class="image-placeholder"></div>
                             </div>
                             <div class="post-content">
                                 <div class="post-meta">
@@ -709,12 +686,12 @@
                                 <p>${post.summary}</p>
                                 <a href="/posts/detail.html?id=${post.id}" class="btn">阅读更多</a>
                             </div>
-                        </article>
-                    `).join('');
+                        `;
+                        postsGrid.appendChild(articleElement);
+                    });
                 }
             } catch (error) {
                 console.error('Error loading recent posts:', error);
-                const postsGrid = document.querySelector('.posts-grid');
                 if (postsGrid) {
                     postsGrid.innerHTML = `
                         <div class="error-message">
