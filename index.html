@@ -270,24 +270,98 @@
             margin-bottom: 1rem;
         }
 
-        /* 按钮样式 */
+        /* 按钮基础样式 */
         .btn {
             display: inline-block;
-            padding: 1rem 2rem;
-            background: var(--primary-color);
-            color: white;
+            padding: 0.8rem 1.6rem;
+            font-size: 0.95rem;
+            font-weight: 500;
             text-decoration: none;
-            border-radius: 0.5rem;
-            transition: var(--transition);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.1) 0%,
+                rgba(37, 99, 235, 0.15) 100%
+            );
+            color: var(--primary-color);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            backdrop-filter: blur(8px);
         }
 
         .btn:hover {
-            background: var(--secondary-color);
             transform: translateY(-2px);
+            background: linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.15) 0%,
+                rgba(37, 99, 235, 0.2) 100%
+            );
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
 
-        .center-button {
-            text-align: center;
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* 文章卡片中的阅读更多按钮 */
+        .post-card .btn {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+        }
+
+        /* 查看所有文章按钮（大按钮） */
+        .center-button .btn {
+            font-size: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.15) 0%,
+                rgba(37, 99, 235, 0.2) 100%
+            );
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            letter-spacing: 0.5px;
+        }
+
+        .center-button .btn:hover {
+            background: linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.2) 0%,
+                rgba(37, 99, 235, 0.25) 100%
+            );
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.15);
+        }
+
+        /* 暗色主题适配 */
+        [data-theme="dark"] .btn {
+            background: linear-gradient(
+                135deg,
+                rgba(96, 165, 250, 0.1) 0%,
+                rgba(96, 165, 250, 0.15) 100%
+            );
+            border-color: rgba(96, 165, 250, 0.2);
+        }
+
+        [data-theme="dark"] .btn:hover {
+            background: linear-gradient(
+                135deg,
+                rgba(96, 165, 250, 0.15) 0%,
+                rgba(96, 165, 250, 0.2) 100%
+            );
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.1);
+        }
+
+        /* 添加图标和动画效果 */
+        .btn i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: translateX(3px);
         }
 
         /* 页脚样式 */
@@ -515,7 +589,9 @@
                 <!-- 文章将通过 JavaScript 动态加载 -->
             </div>
             <div class="center-button">
-                <a href="/posts/" class="btn">查看所有文章</a>
+                <a href="/posts/" class="btn">
+                    查看所有文章 <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </section>
 
@@ -684,7 +760,9 @@
                                 </div>
                                 <h3>${post.title}</h3>
                                 <p>${post.summary}</p>
-                                <a href="/posts/detail.html?id=${post.id}" class="btn">阅读更多</a>
+                                <a href="/posts/detail.html?id=${post.id}" class="btn">
+                                    阅读更多 <i class="fas fa-arrow-right"></i>
+                                </a>
                             </div>
                         `;
                         postsGrid.appendChild(articleElement);
