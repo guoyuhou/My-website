@@ -1,14 +1,24 @@
 {
     "articles": [
         {
+            "id": "2024-11-《Software Engineering at Google》",
+            "title": "《Software Engineering at Google》",
+            "date": "2024-11-14",
+            "category": "技术",
+            "tags": ["JavaScript", "编程", "最佳实践"],
+            "summary": "《Software Engineering at Google》读书笔记。",
+            "path": "2024/11/《Software Engineering at Google》.md",
+            "cover": "assets/images/Software_engeering.jpg"
+        },
+        {
             "id": "2024-11-《ChatGPT驱动软件开发》",
             "title": "《ChatGPT驱动软件开发》",
             "date": "2024-11-14",
             "category": "技术",
             "tags": ["JavaScript", "编程", "最佳实践"],
-            "summary": "MIT人工智能入门课笔记及思考。",
+            "summary": "《ChatGPT驱动软件开发》读书笔记。",
             "path": "2024/11/《ChatGPT驱动软件开发》.md",
-            "cover": "/assets/images/default-cover.jpg"
+            "cover": "assets/images/《ChatGPT驱动软件开发》.jpg"
         },
         {
             "id": "2024-11-目标树、搜索、AI",
