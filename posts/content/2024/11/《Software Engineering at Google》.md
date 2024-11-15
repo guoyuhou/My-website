@@ -1,6 +1,6 @@
 ---
-title: Software Engineering at Google
-date: 2024-11-14
+title: 《Software Engineering at Google》
+date: 2024-11-15
 category: 技术
 tags: [技术]  
 layout: null
