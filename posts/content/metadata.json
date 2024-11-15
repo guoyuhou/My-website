@@ -3,9 +3,9 @@
         {
             "id": "2024-11-《Software Engineering at Google》",
             "title": "《Software Engineering at Google》",
-            "date": "2024-11-14",
+            "date": "2024-11-15",
             "category": "技术",
-            "tags": ["JavaScript", "编程", "最佳实践"],
+            "tags": ["技术"],
             "summary": "《Software Engineering at Google》读书笔记。",
             "path": "2024/11/《Software Engineering at Google》.md",
             "cover": "assets/images/Software_engeering.jpg"
