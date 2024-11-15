@@ -1,6 +1,16 @@
 {
     "articles": [
         {
+            "id": "2024-11-《推销失败》",
+            "title": "《推销失败》",
+            "date": "2024-11-16",
+            "category": "随笔",
+            "tags": ["随笔"],
+            "summary": "《推销失败》读书笔记。",
+            "path": "2024/11/《推销失败》.md",
+            "cover": "assets/images/Software_engeering.jpg"
+        },
+        {
             "id": "2024-11-《Software Engineering at Google》",
             "title": "《Software Engineering at Google》",
             "date": "2024-11-15",
