@@ -111,9 +111,14 @@ class BlogPosts {
     }
 
     createPostCard(post) {
+        const postUrl = `/posts/detail.html?id=${post.id}`;
         return `
             <article class="post-card">
-                <img src="${post.cover}" alt="${post.title}" onerror="this.src='/assets/images/default-cover.jpg'">
+                <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
+                     alt="${post.title}" 
+                     class="post-image"
+                     loading="lazy"
+                     onerror="this.src='/assets/images/default-cover.jpg'">
                 <div class="post-content">
                     <div class="post-meta">
                         <span><i class="fas fa-folder"></i> ${post.category}</span>
@@ -121,9 +126,7 @@ class BlogPosts {
                     </div>
                     <h3>${post.title}</h3>
                     <p>${post.summary}</p>
-                    <a href="${this.postManager.generatePostUrl(post)}" class="read-more">
-                        阅读更多 <i class="fas fa-arrow-right"></i>
-                    </a>
+                    <a href="${postUrl}" class="btn">阅读更多</a>
                 </div>
             </article>
         `;
