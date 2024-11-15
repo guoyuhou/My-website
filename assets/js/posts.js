@@ -55,6 +55,14 @@ class BlogPosts {
             postsToShow.map(post => this.createPostCard(post)).join('') :
             '<div class="no-posts">没有找到相关文章</div>';
 
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.post-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 100);
+            });
+        });
+
         this.renderPagination(filteredPosts.length);
     }
 
@@ -111,22 +119,22 @@ class BlogPosts {
     }
 
     createPostCard(post) {
-        const postUrl = `/posts/detail.html?id=${post.id}`;
         return `
             <article class="post-card">
-                <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
-                     alt="${post.title}" 
-                     class="post-image"
-                     loading="lazy"
-                     onerror="this.src='/assets/images/default-cover.jpg'">
+                <div class="post-image-container">
+                    <img src="${post.cover || '/assets/images/default-cover.jpg'}" 
+                         alt="${post.title}" 
+                         loading="lazy"
+                         onerror="this.src='/assets/images/default-cover.jpg'">
+                </div>
                 <div class="post-content">
                     <div class="post-meta">
                         <span><i class="fas fa-folder"></i> ${post.category}</span>
-                        <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString()}</span>
+                        <span><i class="fas fa-calendar"></i> ${new Date(post.date).toLocaleDateString('zh-CN')}</span>
                     </div>
                     <h3>${post.title}</h3>
                     <p>${post.summary}</p>
-                    <a href="${postUrl}" class="btn">阅读更多</a>
+                    <a href="/posts/detail.html?id=${post.id}" class="btn">阅读更多</a>
                 </div>
             </article>
         `;
